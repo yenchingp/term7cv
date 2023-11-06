@@ -33,3 +33,10 @@ Epoch 5/5
 65s 4s/step - loss: 0.3069
 Loss on validation data: 0.3068734407424927
 ```
+
+3. YoloV8 0.1 of dataset, epoch=5
+```
+results_dict: {'metrics/precision(B)': 0.8195015171037628, 'metrics/recall(B)': 0.7019714058132889, 'metrics/mAP50(B)': 0.7884318516877316, 'metrics/mAP50-95(B)': 0.4450958072553458, 'fitness': 0.4794294116985844}
+save_dir: PosixPath('runs/detect/train33')
+speed: {'preprocess': 0.21475759045831086, 'inference': 5.162103422756853, 'loss': 0.0029062402659449085, 'postprocess': 11.559042437323209}
+```

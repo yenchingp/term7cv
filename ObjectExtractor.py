@@ -5,8 +5,8 @@ from PIL import Image
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 
-images_dir = 'dataset/SKU110K_fixed/images'
-annotations_dir = 'dataset/SKU110K_fixed/annotations'
+images_dir = '/Users/kaavi/Documents/GitHub/term7cv/dataset/SKU110K_fixed/images'
+annotations_dir = '/Users/kaavi/Documents/GitHub/term7cv/dataset/SKU110K_fixed/annotations'
 headers = ['img_name','x1','y1','x2','y2','class','img_w','img_h']
 
 data_set = 'train'

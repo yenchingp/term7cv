@@ -3,8 +3,7 @@ import GUI_utils
 import tkinter as tk
 from PIL import Image, ImageTk
 from tkinter import ttk, filedialog, messagebox
-from threading import Thread, active_count
-from time import perf_counter
+from concurrent.futures import ThreadPoolExecutor
 
 
 class GUI(tk.Frame):
@@ -17,8 +16,10 @@ class GUI(tk.Frame):
         self.image_name = tk.StringVar(value='')
 
         self.output_path = tk.StringVar(value='')
+        self.output_folder = tk.StringVar(value='')
 
         self.input_image_label = None
+        self.output_image_label = None
 
         ######### UI Elements Placement #########
         self.frame_1 = self.create_frame_1(root)
@@ -40,11 +41,17 @@ class GUI(tk.Frame):
         run_button = ttk.Button(frame_1, text='Run --->', command=self.run_button_click).grid(row=1, column=2, padx=10)
 
         choose_output_button = ttk.Button(frame_1, text='Choose Output Folder...', command=self.choose_output).grid(row=0, column=3, sticky=tk.W)
-        output_folder_label = ttk.Label(frame_1, textvariable=self.output_path).grid(row=0, column=4, sticky=tk.W)
+        output_folder_label = ttk.Label(frame_1, textvariable=self.output_folder).grid(row=0, column=4, sticky=tk.W)
+        
         output_image_frame = ttk.Frame(frame_1, width=315, height=315, borderwidth=5, relief='groove')
         output_image_frame.grid(row=1, column=3, columnspan=2, pady=5)
+        self.output_image_label = ttk.Label(output_image_frame, image=None)
+        self.output_image_label.place(relx=.5, rely=.5, anchor='center')
 
         return frame_1
+    
+    def create_frame_2(self, container):
+        frame_2 = ttk.LabelFrame(container, padding=5, text='Step 2: Object Clustering')
 
 
     ######### Button Helper Functions #########
@@ -68,8 +75,8 @@ class GUI(tk.Frame):
         output_path = filedialog.askdirectory(title='Choose Output Folder', initialdir='./GUI_image_test')
 
         if len(output_path) != 0:
-            output_folder = f'/{output_path.split("/")[-1]}'
-            self.output_path.set(output_folder)
+            self.output_folder.set(f'/{output_path.split("/")[-1]}')
+            self.output_path.set(output_path)
 
 
     def run_button_click(self):
@@ -81,11 +88,30 @@ class GUI(tk.Frame):
             messagebox.showerror(title='Error', message='Please Select your Output Folder!')
             return
         
-        GUI_utils.detect_objects(self.image_path.get(), self.output_path.get())
+        thread_pool = ThreadPoolExecutor(1)
+        detect_status = thread_pool.submit(GUI_utils.detect_objects, self.image_path.get(), self.image_name.get(), self.output_path.get())
+        if detect_status.result():
+            print('Detection Complete!')
+            extract_status = thread_pool.submit(GUI_utils.extract_objects, self.image_path.get(), self.image_name.get(), self.output_path.get())
+        
+        if extract_status.result():
+            print('Extraction Complete!')
+            thread_pool.shutdown()
+
+        self.display_output()
+
+
+    def display_output(self):
+        annotated_img_path = f'{self.output_path.get()}/{self.image_name.get().split(".")[0]}_annotated.jpg'
+
+        img = Image.open(annotated_img_path).resize((300, 300), Image.LANCZOS)
+        img = ImageTk.PhotoImage(img)
+
+        self.output_image_label.configure(image=img)
+        self.output_image_label.image=img
+
 
             
-
-
 
 ########## Main Function ##########
 if __name__ == '__main__':

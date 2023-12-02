@@ -1,8 +1,14 @@
 import os
+import platform
 
-data_set = 'test'
+def showFileExplorer(file):  # Path to file (string)
+    if platform.system() == "Windows":
+        import os
+        os.startfile(file)
+    elif platform.system() == "Darwin":
+        import subprocess
+        subprocess.call(["open", "-R", file])
+    else:
+        import subprocess
+        subprocess.Popen(["xdg-open", file])
 
-for img in os.listdir('dataset/SKU110K_fixed/images'):
-    if data_set in img:
-        num = img.split("_")[1].split(".")[0]
-        print(num)

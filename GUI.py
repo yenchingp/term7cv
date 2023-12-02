@@ -1,4 +1,5 @@
 import os
+import platform
 import random
 import GUI_utils
 import numpy as np
@@ -24,7 +25,7 @@ class GUI(tk.Frame):
         self.output_image_label = None
         self.cluster_image_label = None
 
-        self.extraction_complete = False
+        self.step1_complete = False
 
         self.detected_objects = tk.StringVar(value='---')
         self.inventory_count = None
@@ -33,12 +34,21 @@ class GUI(tk.Frame):
 
         self.obj_output_path = tk.StringVar(value='')
 
+        self.status = tk.StringVar(value='Idle')
+        self.progress_bar = None
+
+        self.run_detection_button = None
+        self.run_clustering_button = None
+
         ######### UI Elements Placement #########
         self.frame_1 = self.create_frame_1(root)
         self.frame_1.grid(row=0, column=0, padx=20, pady=10, sticky=tk.N)
 
         self.frame_2 = self.create_frame_2(root)
-        self.frame_2.grid(row=1, column=0, padx=20, pady=10, sticky=tk.W)
+        self.frame_2.grid(row=1, column=0, padx=20, pady=10, sticky=tk.N)
+
+        self.status_frame = self.create_status_frame(root)
+        self.status_frame.grid(row=2, column=0, padx=20, pady=10, sticky=tk.N)
 
 
     ######### UI Element Creation #########
@@ -53,7 +63,8 @@ class GUI(tk.Frame):
         self.input_image_label = ttk.Label(input_image_frame, image=None)
         self.input_image_label.place(relx=.5, rely=.5, anchor='center')
 
-        run_detection_button = ttk.Button(frame_1, text='Run --->', command=self.detection_button_click).grid(row=1, column=2, padx=10)
+        self.run_detection_button = ttk.Button(frame_1, text='Run --->', command=self.detection_button_click, state='disabled')
+        self.run_detection_button.grid(row=1, column=2, padx=10)
 
         choose_output_button = ttk.Button(frame_1, text='Choose Output Folder...', command=self.choose_output).grid(row=0, column=3, sticky=tk.W)
         output_folder_label = ttk.Label(frame_1, textvariable=self.output_folder).grid(row=0, column=4, sticky=tk.W)
@@ -74,11 +85,13 @@ class GUI(tk.Frame):
         ttk.Label(text_frame, text='No. of Objects Detected: ').grid(row=0, column=0, sticky=tk.W)
         detected_objects_label = ttk.Label(text_frame, textvariable=self.detected_objects, width=3).grid(row=1, column=0)
 
-        run_clustering_button = ttk.Button(frame_2, text='Run Clustering --->', command=self.clustering_button_click).grid(row=1, column=0)
+        self.run_clustering_button = ttk.Button(frame_2, text='Run Clustering --->', command=self.clustering_button_click, state='disabled')
+        self.run_clustering_button.grid(row=1, column=0)
 
         self.cluster_tree = self.create_cluster_tree(frame_2)
         self.cluster_tree.grid(row=0, column=1, padx=15, rowspan=4)
         self.cluster_tree.bind('<ButtonRelease-1>', self.select_item)
+        self.cluster_tree.bind('<Double-1>', self.open_folder)
 
         cluster_image_frame = ttk.Frame(frame_2, width=315, height=315, borderwidth=5, relief='groove')
         cluster_image_frame.grid(row=0, column=2, rowspan=4, pady=5)
@@ -86,6 +99,17 @@ class GUI(tk.Frame):
         self.cluster_image_label.place(relx=.5, rely=.5, anchor='center')
 
         return frame_2
+    
+
+    def create_status_frame(self, container):
+        status_frame = ttk.Labelframe(container, padding=5, text='Status')
+
+        status_label = ttk.Label(status_frame, textvariable=self.status).grid(row=0, column=0, sticky=tk.W)
+
+        self.progress_bar = ttk.Progressbar(status_frame, orient='horizontal', mode='determinate', length=720, maximum=100)
+        self.progress_bar.grid(row=1, column=0, columnspan=5, pady=5)
+
+        return status_frame
     
 
     def create_cluster_tree(self, container):
@@ -102,21 +126,8 @@ class GUI(tk.Frame):
 
         return tree
 
+
     ######### Button Helper Functions #########
-    def select_item(self, a):
-        tree_item = self.cluster_tree.focus()
-        self.selected_cluster.set(self.cluster_tree.item(tree_item)['values'][0])
-        
-        thumbnail_name = self.selected_cluster.get().lower().replace(" ", "_")
-        thumbnail_path = f'{self.obj_output_path.get()}/clusters/thumbnails/{thumbnail_name}.jpg'
-
-        img = Image.open(thumbnail_path).resize((300, 300), Image.LANCZOS)
-        img = ImageTk.PhotoImage(img)
-
-        self.cluster_image_label.configure(image=img)
-        self.cluster_image_label.image=img
-
-
     def choose_image(self):
         img_path = filedialog.askopenfilename(title='Choose Image to Process', filetypes=[("Image Files", ".jpg .png")], initialdir='./GUI_image_test')
         
@@ -132,6 +143,10 @@ class GUI(tk.Frame):
             self.input_image_label.configure(image=img)
             self.input_image_label.image=img
 
+            if self.output_path.get() != '':
+                self.run_detection_button['state'] = 'normal'
+                self.status.set('Ready to run Object Detection!')
+
 
     def choose_output(self):
         output_path = filedialog.askdirectory(title='Choose Output Folder', initialdir='./GUI_image_test')
@@ -139,6 +154,10 @@ class GUI(tk.Frame):
         if len(output_path) != 0:
             self.output_folder.set(f'/{output_path.split("/")[-1]}')
             self.output_path.set(output_path)
+
+            if self.image_path.get() != '':
+                self.run_detection_button['state'] = 'normal'
+                self.status.set('Ready to run Object Detection!')
 
 
     def detection_button_click(self):
@@ -150,21 +169,37 @@ class GUI(tk.Frame):
             messagebox.showerror(title='Error', message='Please Select your Output Folder!')
             return
         
+        self.status.set('Running Object Detection...')
+        self.progress_bar['value'] = 25
+        root.update_idletasks()
+
         thread_pool = ThreadPoolExecutor(1)
         detect_status = thread_pool.submit(GUI_utils.detect_objects, self.image_path.get(), self.image_name.get(), self.output_path.get())
+
         if detect_status.result():
-            print('Detection Complete!')
+            self.status.set('Detection Complete! Running Object Extraction...')
+            self.progress_bar['value'] = 50
+            root.update_idletasks()
+
             extract_status = thread_pool.submit(GUI_utils.extract_objects, self.image_path.get(), self.image_name.get(), self.output_path.get())
         
         if extract_status.result():
-            print('Extraction Complete!')
-            self.extraction_complete = True
+            self.step1_complete = True
+            self.progress_bar['value'] = 75
+            root.update_idletasks()
+
             thread_pool.shutdown()
 
         self.display_annotated_img()
 
         self.obj_output_path.set(f'{self.output_path.get()}/{self.image_name.get().split(".")[0]}_objects')
         self.detected_objects.set(str(len(os.listdir(self.obj_output_path.get()))))
+
+        if self.step1_complete:
+            self.run_clustering_button['state'] = 'normal'
+            self.status.set('Object Extraction Complete! Ready for Clustering')
+            self.progress_bar['value'] = 100
+            root.update_idletasks()
 
 
     def display_annotated_img(self):
@@ -178,32 +213,42 @@ class GUI(tk.Frame):
 
 
     def clustering_button_click(self):
-        if not self.extraction_complete:
+        if not self.step1_complete:
             messagebox.showerror(title='Error', message='Run Object Detection first!')
             return
 
+        self.status.set('Running Clustering! Extracting image features...')
+        self.progress_bar['value'] = 10
+        root.update_idletasks()
         thread_pool = ThreadPoolExecutor(1)
 
         extract_features = thread_pool.submit(GUI_utils.extract_vgg19_features, self.obj_output_path.get())
         features_dict = extract_features.result()
-
-        print('Features Extracted!')
+        self.status.set('Running Clustering! Running PCA...')
+        self.progress_bar['value'] = 60
+        root.update_idletasks()
 
         reduce_dims = thread_pool.submit(GUI_utils.dim_reduction_umap, features_dict)
         reduced_features = reduce_dims.result()
-
-        print('Dimensionality Reduction Completed!')
+        self.status.set('Running Clustering! Determining Clusters...')
+        self.progress_bar['value'] = 70
+        root.update_idletasks()
 
         cluster_objs = thread_pool.submit(GUI_utils.clustering_AP, reduced_features, self.obj_output_path.get())
         self.inventory_count = cluster_objs.result()
-
-        print('Objects Clustered!')
+        self.status.set('Running Clustering! Generating Thumbnails...')
+        self.progress_bar['value'] = 80
+        root.update_idletasks()
         
         self.generate_collages(f'{self.obj_output_path.get()}/clusters')
-        
-        print('Thumbnails Generated!')
+        self.status.set('Running Clustering! Showing results...')
+        self.progress_bar['value'] = 90
+        root.update_idletasks()
 
         self.populate_cluster_tree(self.cluster_tree, self.inventory_count)
+        self.status.set('Complete!')
+        self.progress_bar['value'] = 100
+        root.update_idletasks()
     
 
     def populate_cluster_tree(self, tree: ttk.Treeview, inv_count: dict):
@@ -253,6 +298,35 @@ class GUI(tk.Frame):
         
         return image
             
+
+    def select_item(self, a):
+        tree_item = self.cluster_tree.focus()
+        self.selected_cluster.set(self.cluster_tree.item(tree_item)['values'][0])
+        
+        thumbnail_name = self.selected_cluster.get().lower().replace(" ", "_")
+        thumbnail_path = f'{self.obj_output_path.get()}/clusters/thumbnails/{thumbnail_name}.jpg'
+
+        img = Image.open(thumbnail_path).resize((300, 300), Image.LANCZOS)
+        img = ImageTk.PhotoImage(img)
+
+        self.cluster_image_label.configure(image=img)
+        self.cluster_image_label.image=img
+
+
+    def open_folder(self, a):
+        file_path = f'{self.obj_output_path.get()}/clusters/{self.selected_cluster.get().lower().replace(" ", "_")}'
+        print(file_path)
+
+        if platform.system() == "Windows":
+            import os
+            os.startfile(file_path)
+        elif platform.system() == "Darwin":
+            import subprocess
+            subprocess.call(["open", "-R", file_path])
+        else:
+            import subprocess
+            subprocess.Popen(["xdg-open", file_path])
+
 
 ########## Main Function ##########
 if __name__ == '__main__':

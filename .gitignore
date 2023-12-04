@@ -2,3 +2,4 @@ dataset/
 SKU110K_fixed/
 .env
 *.keras
+models/

@@ -3,3 +3,4 @@ SKU110K_fixed/
 .env
 *.keras
 models/
+checkpoints/

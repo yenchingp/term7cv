@@ -47,7 +47,12 @@ models = {
 }
 
 
-for i in range(10):
+for i in range(39, 55):
+    print(i)
+
+    if i in [40]:
+        continue
+
     img_dir = f'dataset/objects/train_{i}'
 
     all_features = {}

@@ -1,0 +1,71 @@
+import os
+import numpy as np
+import pandas as pd
+from tensorflow.keras.preprocessing import image
+from tensorflow.keras.applications import mobilenet, resnet, densenet, efficientnet, vgg19
+from tensorflow.keras.models import Model
+from sklearn.decomposition import PCA
+from sklearn.manifold import TSNE
+from sklearn.preprocessing import StandardScaler
+from sklearn.cluster import DBSCAN, MeanShift, estimate_bandwidth, AffinityPropagation
+import hdbscan
+from sklearn import metrics
+import umap
+
+
+def load_and_preprocess_image(img_path, preprocess_input_func, target_size=(224, 224)):
+    img = image.load_img(img_path, target_size=target_size)
+    img = image.img_to_array(img)
+    img = preprocess_input_func(img)
+    return np.expand_dims(img, axis=0)
+
+
+def create_feature_model(model_fn, preprocess_input_func):
+    base_model = model_fn(weights='imagenet', include_top=False)
+    feature_model = Model(inputs=base_model.input, outputs=base_model.output)
+    return feature_model, preprocess_input_func
+
+
+def extract_features_from_folder(folder_path, model_fn, preprocess_input_func):
+    feature_model, preprocess_input = create_feature_model(model_fn, preprocess_input_func)
+    features = []
+    for img_name in os.listdir(folder_path):
+        if img_name.lower().endswith(('.png', '.jpg', '.jpeg')):
+            img_path = os.path.join(folder_path, img_name)
+            img = load_and_preprocess_image(img_path, preprocess_input)
+            feature = feature_model.predict(img)
+            features.append(feature.flatten())
+    return np.array(features)
+
+
+models = {
+    'densenet': (densenet.DenseNet121, densenet.preprocess_input)
+}
+
+img_dir = 'GUI_image_test/annotated_img/val_116_objects'
+all_features = {}
+for model_name, (model_fn, preprocess_input_func) in models.items():
+    all_features[model_name] = extract_features_from_folder(img_dir, model_fn, preprocess_input_func)
+
+
+reduced_features = {}
+for model_name, features in all_features.items():
+    features = StandardScaler().fit_transform(features)
+
+    umap_reducer = umap.UMAP(n_neighbors=15, n_components=2)
+    reduced_features[(model_name, 'umap')] = umap_reducer.fit_transform(features)
+
+
+results = {}
+for (model_name, reduction_technique), features in reduced_features.items():
+    for q in [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5]:    
+        # Mean Shift
+        bandwidth = estimate_bandwidth(features, quantile=q)
+        ms = MeanShift(bandwidth=bandwidth, bin_seeding=True).fit(features)
+        ms_labels = ms.labels_
+
+
+        silhouette = metrics.silhouette_score(features, ms_labels) if len(set(ms_labels)) > 1 else -1
+        results[q] = {'silhouette_score': silhouette}
+
+print(results)

@@ -61,17 +61,17 @@ import umap
 import shutil
 import numpy as np
 from sklearn import metrics
-from sklearn.cluster import AffinityPropagation
+from sklearn.cluster import MeanShift, estimate_bandwidth
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras.preprocessing import image
 
-from tensorflow.keras.applications import vgg19
+from tensorflow.keras.applications import densenet
 
 
-def extract_vgg19_features(img_dir):
+def extract_features_densenet(img_dir):
     # Load Model
-    model = vgg19.VGG19(weights='imagenet', include_top=False)
+    model = densenet.DenseNet121(weights='imagenet', include_top=False)
 
     # Feature Extraction
     features_dict = {}
@@ -82,13 +82,15 @@ def extract_vgg19_features(img_dir):
             # Load and preprocess the image
             img = image.load_img(image_path, target_size=(224, 224))
             img = image.img_to_array(img)
-            img = vgg19.preprocess_input(img)
+            img = densenet.preprocess_input(img)
             img = np.expand_dims(img, axis=0)
 
             # Extract features from the desired layer (e.g., block5_pool)
-            layer_name = 'block5_pool'  # You can choose a different layer
-            intermediate_layer_model = tf.keras.models.Model(inputs=model.input, outputs=model.get_layer(layer_name).output)
-            features_dict[img_name] = intermediate_layer_model.predict(img)
+            # layer_name = 'block5_pool'  # You can choose a different layer
+            # intermediate_layer_model = tf.keras.models.Model(inputs=model.input, outputs=model.get_layer(layer_name).output)
+            # features_dict[img_name] = intermediate_layer_model.predict(img)
+
+            features_dict[img_name] = model.predict(img)
 
     return features_dict
 
@@ -106,12 +108,15 @@ def dim_reduction_umap(features_dict):
     return reduced_features
 
 
-def clustering_AP(reduced_features, img_dir):
+def clustering_MeanShift(reduced_features, img_dir):
     # 'reduced_features' to list of feature coordinates for clustering
     X = np.array(list(reduced_features.values()))
 
-    af = AffinityPropagation().fit(X)
-    af_labels = af.labels_
+    # bandwidth = estimate_bandwidth(X, quantile=0.2)
+    bandwidth = 0.4
+    # print(f'{bandwidth=}')
+    ms = MeanShift(bandwidth=bandwidth, bin_seeding=True).fit(X)
+    ms_labels = ms.labels_
 
     cluster_dir_base = os.path.join(img_dir, 'clusters')
     os.makedirs(cluster_dir_base, exist_ok=True)
@@ -129,7 +134,7 @@ def clustering_AP(reduced_features, img_dir):
 
     inventory_count = {}
 
-    for img_name, cluster_label in zip(reduced_features.keys(), af_labels):
+    for img_name, cluster_label in zip(reduced_features.keys(), ms_labels):
         if cluster_label == -1:
             # -1 for noise points
             cluster_path = os.path.join(cluster_dir_base, 'noise')
@@ -144,4 +149,6 @@ def clustering_AP(reduced_features, img_dir):
         
         inventory_count[cluster_label] = inventory_count.get(cluster_label, 0) + 1
 
-    return inventory_count
+    silhouette = metrics.silhouette_score(X, ms_labels)
+
+    return inventory_count, silhouette

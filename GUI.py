@@ -36,6 +36,7 @@ class GUI(tk.Frame):
 
         self.status = tk.StringVar(value='Idle')
         self.progress_bar = None
+        self.silhouette_score = tk.StringVar(value='-')
 
         self.run_detection_button = None
         self.run_clustering_button = None
@@ -222,7 +223,7 @@ class GUI(tk.Frame):
         root.update_idletasks()
         thread_pool = ThreadPoolExecutor(1)
 
-        extract_features = thread_pool.submit(GUI_utils.extract_vgg19_features, self.obj_output_path.get())
+        extract_features = thread_pool.submit(GUI_utils.extract_features_densenet, self.obj_output_path.get())
         features_dict = extract_features.result()
         self.status.set('Running Clustering! Running PCA...')
         self.progress_bar['value'] = 60
@@ -234,8 +235,9 @@ class GUI(tk.Frame):
         self.progress_bar['value'] = 70
         root.update_idletasks()
 
-        cluster_objs = thread_pool.submit(GUI_utils.clustering_AP, reduced_features, self.obj_output_path.get())
-        self.inventory_count = cluster_objs.result()
+        cluster_objs = thread_pool.submit(GUI_utils.clustering_MeanShift, reduced_features, self.obj_output_path.get())
+        self.inventory_count, s_score = cluster_objs.result()
+        self.silhouette_score.set(str(s_score))
         self.status.set('Running Clustering! Generating Thumbnails...')
         self.progress_bar['value'] = 80
         root.update_idletasks()
@@ -246,7 +248,7 @@ class GUI(tk.Frame):
         root.update_idletasks()
 
         self.populate_cluster_tree(self.cluster_tree, self.inventory_count)
-        self.status.set('Complete!')
+        self.status.set(f'Complete! Silhouette Score: {self.silhouette_score.get()}')
         self.progress_bar['value'] = 100
         root.update_idletasks()
     

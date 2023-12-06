@@ -16,7 +16,7 @@ def extract_features_from_array(img_array, model):
     features = model.predict(img_preprocessed)
     return features.squeeze()
 
-def extract_features_for_folder(folder_path, model):
+def extract_features_for_folder(folder_path, model): 
     feature_list = []
     for file_name in os.listdir(folder_path):
         if file_name.lower().endswith('.jpg'):  # Check if the file is a JPEG image

@@ -79,7 +79,6 @@ def extract_vgg19_features(img_dir):
         image_path = os.path.join(img_dir, img_name)
         if image_path.lower().endswith(('.png', '.jpg', '.jpeg')):  # Check to ensure only images are processed
 
-
             # Load and preprocess the image
             img = image.load_img(image_path, target_size=(224, 224))
             img = image.img_to_array(img)

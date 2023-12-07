@@ -4,3 +4,4 @@ SKU110K_fixed/
 *.keras
 models/
 checkpoints/
+*.pth

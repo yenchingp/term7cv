@@ -1,0 +1,2402 @@
+2023/12/06 03:22:21 - mmengine - INFO - 
+------------------------------------------------------------
+System environment:
+    sys.platform: win32
+    Python: 3.9.18 (main, Sep 11 2023, 14:09:26) [MSC v.1916 64 bit (AMD64)]
+    CUDA available: True
+    numpy_random_seed: 630279235
+    GPU 0: NVIDIA GeForce GTX 1660 SUPER
+    CUDA_HOME: C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.8
+    NVCC: Cuda compilation tools, release 11.8, V11.8.89
+    MSVC: Microsoft (R) C/C++ Optimizing Compiler Version 19.38.33130 for x64
+    GCC: n/a
+    PyTorch: 2.1.1
+    PyTorch compiling details: PyTorch built with:
+  - C++ Version: 199711
+  - MSVC 192930151
+  - Intel(R) Math Kernel Library Version 2020.0.2 Product Build 20200624 for Intel(R) 64 architecture applications
+  - Intel(R) MKL-DNN v3.1.1 (Git Hash 64f6bcbcbab628e96f33a62c3e975f8535a7bde4)
+  - OpenMP 2019
+  - LAPACK is enabled (usually provided by MKL)
+  - CPU capability usage: AVX2
+  - CUDA Runtime 11.8
+  - NVCC architecture flags: -gencode;arch=compute_50,code=sm_50;-gencode;arch=compute_60,code=sm_60;-gencode;arch=compute_61,code=sm_61;-gencode;arch=compute_70,code=sm_70;-gencode;arch=compute_75,code=sm_75;-gencode;arch=compute_80,code=sm_80;-gencode;arch=compute_86,code=sm_86;-gencode;arch=compute_37,code=sm_37;-gencode;arch=compute_90,code=sm_90;-gencode;arch=compute_37,code=compute_37
+  - CuDNN 8.7
+  - Magma 2.5.4
+  - Build settings: BLAS_INFO=mkl, BUILD_TYPE=Release, CUDA_VERSION=11.8, CUDNN_VERSION=8.7.0, CXX_COMPILER=C:/cb/pytorch_1000000000000/work/tmp_bin/sccache-cl.exe, CXX_FLAGS=/DWIN32 /D_WINDOWS /GR /EHsc /bigobj /FS -DUSE_PTHREADPOOL -DNDEBUG -DUSE_KINETO -DLIBKINETO_NOCUPTI -DLIBKINETO_NOROCTRACER -DUSE_FBGEMM -DUSE_XNNPACK -DSYMBOLICATE_MOBILE_DEBUG_HANDLE /utf-8 /wd4624 /wd4068 /wd4067 /wd4267 /wd4661 /wd4717 /wd4244 /wd4804 /wd4273, LAPACK_INFO=mkl, PERF_WITH_AVX=1, PERF_WITH_AVX2=1, PERF_WITH_AVX512=1, TORCH_DISABLE_GPU_ASSERTS=OFF, TORCH_VERSION=2.1.1, USE_CUDA=ON, USE_CUDNN=ON, USE_EXCEPTION_PTR=1, USE_GFLAGS=OFF, USE_GLOG=OFF, USE_MKL=ON, USE_MKLDNN=ON, USE_MPI=OFF, USE_NCCL=OFF, USE_NNPACK=OFF, USE_OPENMP=ON, USE_ROCM=OFF, 
+
+    TorchVision: 0.16.1
+    OpenCV: 4.8.1
+    MMEngine: 0.10.1
+
+Runtime environment:
+    cudnn_benchmark: False
+    mp_cfg: {'mp_start_method': 'fork', 'opencv_num_threads': 0}
+    dist_cfg: {'backend': 'nccl'}
+    seed: 630279235
+    Distributed launcher: none
+    Distributed training: False
+    GPU number: 1
+------------------------------------------------------------
+
+2023/12/06 03:22:22 - mmengine - INFO - Config:
+auto_scale_lr = dict(base_batch_size=16, enable=False)
+backend_args = None
+base_lr = 8e-05
+data_root = 'SKU110K_fixed/'
+dataset_type = 'CocoDataset'
+default_hooks = dict(
+    checkpoint=dict(
+        interval=5, max_keep_ckpts=2, save_best='auto', type='CheckpointHook'),
+    logger=dict(interval=5, type='LoggerHook'),
+    param_scheduler=dict(type='ParamSchedulerHook'),
+    sampler_seed=dict(type='DistSamplerSeedHook'),
+    timer=dict(type='IterTimerHook'),
+    visualization=dict(type='DetVisualizationHook'))
+default_scope = 'mmdet'
+env_cfg = dict(
+    cudnn_benchmark=False,
+    dist_cfg=dict(backend='nccl'),
+    mp_cfg=dict(mp_start_method='fork', opencv_num_threads=0))
+launcher = 'none'
+load_from = 'checkpoints/sparse_rcnn_r50_fpn_300_proposals_crop_mstrain_480-800_3x_coco_20201223_024605-9fe92701.pth'
+log_level = 'INFO'
+log_processor = dict(by_epoch=True, type='LogProcessor', window_size=50)
+max_epochs = 10
+metainfo = dict(
+    classes=('object', ), palette=[
+        (
+            220,
+            20,
+            60,
+        ),
+    ])
+model = dict(
+    backbone=dict(
+        depth=50,
+        frozen_stages=1,
+        init_cfg=dict(checkpoint='torchvision://resnet50', type='Pretrained'),
+        norm_cfg=dict(requires_grad=True, type='BN'),
+        norm_eval=True,
+        num_stages=4,
+        out_indices=(
+            0,
+            1,
+            2,
+            3,
+        ),
+        style='pytorch',
+        type='ResNet'),
+    data_preprocessor=dict(
+        bgr_to_rgb=True,
+        mean=[
+            123.675,
+            116.28,
+            103.53,
+        ],
+        pad_size_divisor=32,
+        std=[
+            58.395,
+            57.12,
+            57.375,
+        ],
+        type='DetDataPreprocessor'),
+    neck=dict(
+        add_extra_convs='on_input',
+        in_channels=[
+            256,
+            512,
+            1024,
+            2048,
+        ],
+        num_outs=4,
+        out_channels=256,
+        start_level=0,
+        type='FPN'),
+    roi_head=dict(
+        bbox_head=[
+            dict(
+                bbox_coder=dict(
+                    clip_border=False,
+                    target_means=[
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                    ],
+                    target_stds=[
+                        0.5,
+                        0.5,
+                        1.0,
+                        1.0,
+                    ],
+                    type='DeltaXYWHBBoxCoder'),
+                dropout=0.0,
+                dynamic_conv_cfg=dict(
+                    act_cfg=dict(inplace=True, type='ReLU'),
+                    feat_channels=64,
+                    in_channels=256,
+                    input_feat_shape=7,
+                    norm_cfg=dict(type='LN'),
+                    out_channels=256,
+                    type='DynamicConv'),
+                feedforward_channels=2048,
+                ffn_act_cfg=dict(inplace=True, type='ReLU'),
+                in_channels=256,
+                loss_bbox=dict(loss_weight=5.0, type='L1Loss'),
+                loss_cls=dict(
+                    alpha=0.25,
+                    gamma=2.5,
+                    loss_weight=2.0,
+                    type='FocalLoss',
+                    use_sigmoid=True),
+                loss_iou=dict(loss_weight=2.0, type='GIoULoss'),
+                num_classes=1,
+                num_cls_fcs=1,
+                num_ffn_fcs=2,
+                num_heads=8,
+                num_reg_fcs=3,
+                type='DIIHead'),
+            dict(
+                bbox_coder=dict(
+                    clip_border=False,
+                    target_means=[
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                    ],
+                    target_stds=[
+                        0.5,
+                        0.5,
+                        1.0,
+                        1.0,
+                    ],
+                    type='DeltaXYWHBBoxCoder'),
+                dropout=0.0,
+                dynamic_conv_cfg=dict(
+                    act_cfg=dict(inplace=True, type='ReLU'),
+                    feat_channels=64,
+                    in_channels=256,
+                    input_feat_shape=7,
+                    norm_cfg=dict(type='LN'),
+                    out_channels=256,
+                    type='DynamicConv'),
+                feedforward_channels=2048,
+                ffn_act_cfg=dict(inplace=True, type='ReLU'),
+                in_channels=256,
+                loss_bbox=dict(loss_weight=5.0, type='L1Loss'),
+                loss_cls=dict(
+                    alpha=0.25,
+                    gamma=2.5,
+                    loss_weight=2.0,
+                    type='FocalLoss',
+                    use_sigmoid=True),
+                loss_iou=dict(loss_weight=2.0, type='GIoULoss'),
+                num_classes=1,
+                num_cls_fcs=1,
+                num_ffn_fcs=2,
+                num_heads=8,
+                num_reg_fcs=3,
+                type='DIIHead'),
+            dict(
+                bbox_coder=dict(
+                    clip_border=False,
+                    target_means=[
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                    ],
+                    target_stds=[
+                        0.5,
+                        0.5,
+                        1.0,
+                        1.0,
+                    ],
+                    type='DeltaXYWHBBoxCoder'),
+                dropout=0.0,
+                dynamic_conv_cfg=dict(
+                    act_cfg=dict(inplace=True, type='ReLU'),
+                    feat_channels=64,
+                    in_channels=256,
+                    input_feat_shape=7,
+                    norm_cfg=dict(type='LN'),
+                    out_channels=256,
+                    type='DynamicConv'),
+                feedforward_channels=2048,
+                ffn_act_cfg=dict(inplace=True, type='ReLU'),
+                in_channels=256,
+                loss_bbox=dict(loss_weight=5.0, type='L1Loss'),
+                loss_cls=dict(
+                    alpha=0.25,
+                    gamma=2.5,
+                    loss_weight=2.0,
+                    type='FocalLoss',
+                    use_sigmoid=True),
+                loss_iou=dict(loss_weight=2.0, type='GIoULoss'),
+                num_classes=1,
+                num_cls_fcs=1,
+                num_ffn_fcs=2,
+                num_heads=8,
+                num_reg_fcs=3,
+                type='DIIHead'),
+            dict(
+                bbox_coder=dict(
+                    clip_border=False,
+                    target_means=[
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                    ],
+                    target_stds=[
+                        0.5,
+                        0.5,
+                        1.0,
+                        1.0,
+                    ],
+                    type='DeltaXYWHBBoxCoder'),
+                dropout=0.0,
+                dynamic_conv_cfg=dict(
+                    act_cfg=dict(inplace=True, type='ReLU'),
+                    feat_channels=64,
+                    in_channels=256,
+                    input_feat_shape=7,
+                    norm_cfg=dict(type='LN'),
+                    out_channels=256,
+                    type='DynamicConv'),
+                feedforward_channels=2048,
+                ffn_act_cfg=dict(inplace=True, type='ReLU'),
+                in_channels=256,
+                loss_bbox=dict(loss_weight=5.0, type='L1Loss'),
+                loss_cls=dict(
+                    alpha=0.25,
+                    gamma=2.5,
+                    loss_weight=2.0,
+                    type='FocalLoss',
+                    use_sigmoid=True),
+                loss_iou=dict(loss_weight=2.0, type='GIoULoss'),
+                num_classes=1,
+                num_cls_fcs=1,
+                num_ffn_fcs=2,
+                num_heads=8,
+                num_reg_fcs=3,
+                type='DIIHead'),
+            dict(
+                bbox_coder=dict(
+                    clip_border=False,
+                    target_means=[
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                    ],
+                    target_stds=[
+                        0.5,
+                        0.5,
+                        1.0,
+                        1.0,
+                    ],
+                    type='DeltaXYWHBBoxCoder'),
+                dropout=0.0,
+                dynamic_conv_cfg=dict(
+                    act_cfg=dict(inplace=True, type='ReLU'),
+                    feat_channels=64,
+                    in_channels=256,
+                    input_feat_shape=7,
+                    norm_cfg=dict(type='LN'),
+                    out_channels=256,
+                    type='DynamicConv'),
+                feedforward_channels=2048,
+                ffn_act_cfg=dict(inplace=True, type='ReLU'),
+                in_channels=256,
+                loss_bbox=dict(loss_weight=5.0, type='L1Loss'),
+                loss_cls=dict(
+                    alpha=0.25,
+                    gamma=2.5,
+                    loss_weight=2.0,
+                    type='FocalLoss',
+                    use_sigmoid=True),
+                loss_iou=dict(loss_weight=2.0, type='GIoULoss'),
+                num_classes=1,
+                num_cls_fcs=1,
+                num_ffn_fcs=2,
+                num_heads=8,
+                num_reg_fcs=3,
+                type='DIIHead'),
+        ],
+        bbox_roi_extractor=dict(
+            featmap_strides=[
+                4,
+                8,
+                16,
+                32,
+            ],
+            out_channels=256,
+            roi_layer=dict(output_size=7, sampling_ratio=2, type='RoIAlign'),
+            type='SingleRoIExtractor'),
+        num_stages=5,
+        proposal_feature_channel=256,
+        stage_loss_weights=[
+            1,
+            1,
+            1,
+            1,
+            1,
+        ],
+        type='SparseRoIHead'),
+    rpn_head=dict(
+        num_proposals=200,
+        proposal_feature_channel=256,
+        type='EmbeddingRPNHead'),
+    test_cfg=dict(rcnn=dict(max_per_img=200), rpn=None),
+    train_cfg=dict(
+        rcnn=[
+            dict(
+                assigner=dict(
+                    match_costs=[
+                        dict(type='FocalLossCost', weight=2.0),
+                        dict(box_format='xyxy', type='BBoxL1Cost', weight=5.0),
+                        dict(iou_mode='giou', type='IoUCost', weight=2.0),
+                    ],
+                    type='HungarianAssigner'),
+                pos_weight=1,
+                sampler=dict(type='PseudoSampler')),
+            dict(
+                assigner=dict(
+                    match_costs=[
+                        dict(type='FocalLossCost', weight=2.0),
+                        dict(box_format='xyxy', type='BBoxL1Cost', weight=5.0),
+                        dict(iou_mode='giou', type='IoUCost', weight=2.0),
+                    ],
+                    type='HungarianAssigner'),
+                pos_weight=1,
+                sampler=dict(type='PseudoSampler')),
+            dict(
+                assigner=dict(
+                    match_costs=[
+                        dict(type='FocalLossCost', weight=2.0),
+                        dict(box_format='xyxy', type='BBoxL1Cost', weight=5.0),
+                        dict(iou_mode='giou', type='IoUCost', weight=2.0),
+                    ],
+                    type='HungarianAssigner'),
+                pos_weight=1,
+                sampler=dict(type='PseudoSampler')),
+            dict(
+                assigner=dict(
+                    match_costs=[
+                        dict(type='FocalLossCost', weight=2.0),
+                        dict(box_format='xyxy', type='BBoxL1Cost', weight=5.0),
+                        dict(iou_mode='giou', type='IoUCost', weight=2.0),
+                    ],
+                    type='HungarianAssigner'),
+                pos_weight=1,
+                sampler=dict(type='PseudoSampler')),
+            dict(
+                assigner=dict(
+                    match_costs=[
+                        dict(type='FocalLossCost', weight=2.0),
+                        dict(box_format='xyxy', type='BBoxL1Cost', weight=5.0),
+                        dict(iou_mode='giou', type='IoUCost', weight=2.0),
+                    ],
+                    type='HungarianAssigner'),
+                pos_weight=1,
+                sampler=dict(type='PseudoSampler')),
+        ],
+        rpn=None),
+    type='SparseRCNN')
+num_proposals = 200
+num_stages = 5
+optim_wrapper = dict(
+    optimizer=dict(lr=8e-05, type='AdamW', weight_decay=0.02),
+    paramwise_cfg=dict(
+        bias_decay_mult=0, bypass_duplicate=True, norm_decay_mult=0),
+    type='OptimWrapper')
+param_scheduler = [
+    dict(begin=0, by_epoch=False, end=10, start_factor=1e-05, type='LinearLR'),
+    dict(
+        T_max=5,
+        begin=5,
+        by_epoch=True,
+        convert_to_iter_based=True,
+        end=10,
+        eta_min=4.000000000000001e-06,
+        type='CosineAnnealingLR'),
+]
+resume = False
+test_cfg = dict(type='TestLoop')
+test_dataloader = dict(
+    batch_size=1,
+    dataset=dict(
+        ann_file='coco_annotations_val.json',
+        backend_args=None,
+        data_prefix=dict(img='images/val/'),
+        data_root='SKU110K_fixed/',
+        metainfo=dict(classes=('object', ), palette=[
+            (
+                220,
+                20,
+                60,
+            ),
+        ]),
+        pipeline=[
+            dict(backend_args=None, type='LoadImageFromFile'),
+            dict(keep_ratio=True, scale=(
+                1333,
+                800,
+            ), type='Resize'),
+            dict(type='LoadAnnotations', with_bbox=True),
+            dict(
+                meta_keys=(
+                    'img_id',
+                    'img_path',
+                    'ori_shape',
+                    'img_shape',
+                    'scale_factor',
+                ),
+                type='PackDetInputs'),
+        ],
+        test_mode=True,
+        type='CocoDataset'),
+    drop_last=False,
+    num_workers=2,
+    persistent_workers=True,
+    sampler=dict(shuffle=False, type='DefaultSampler'))
+test_evaluator = dict(
+    ann_file='SKU110K_fixed/coco_annotations_val.json',
+    backend_args=None,
+    format_only=False,
+    metric='bbox',
+    type='CocoMetric')
+test_pipeline = [
+    dict(backend_args=None, type='LoadImageFromFile'),
+    dict(keep_ratio=True, scale=(
+        1333,
+        800,
+    ), type='Resize'),
+    dict(type='LoadAnnotations', with_bbox=True),
+    dict(
+        meta_keys=(
+            'img_id',
+            'img_path',
+            'ori_shape',
+            'img_shape',
+            'scale_factor',
+        ),
+        type='PackDetInputs'),
+]
+train_batch_size_per_gpu = 4
+train_cfg = dict(max_epochs=10, type='EpochBasedTrainLoop', val_interval=1)
+train_dataloader = dict(
+    batch_sampler=dict(type='AspectRatioBatchSampler'),
+    batch_size=4,
+    dataset=dict(
+        ann_file='coco_annotations_train.json',
+        backend_args=None,
+        data_prefix=dict(img='images/train/'),
+        data_root='SKU110K_fixed/',
+        filter_cfg=dict(filter_empty_gt=True, min_size=32),
+        metainfo=dict(classes=('object', ), palette=[
+            (
+                220,
+                20,
+                60,
+            ),
+        ]),
+        pipeline=[
+            dict(backend_args=None, type='LoadImageFromFile'),
+            dict(type='LoadAnnotations', with_bbox=True),
+            dict(prob=0.5, type='RandomFlip'),
+            dict(
+                transforms=[
+                    [
+                        dict(
+                            keep_ratio=True,
+                            scales=[
+                                (
+                                    480,
+                                    1333,
+                                ),
+                                (
+                                    512,
+                                    1333,
+                                ),
+                                (
+                                    544,
+                                    1333,
+                                ),
+                                (
+                                    576,
+                                    1333,
+                                ),
+                                (
+                                    608,
+                                    1333,
+                                ),
+                                (
+                                    640,
+                                    1333,
+                                ),
+                                (
+                                    672,
+                                    1333,
+                                ),
+                                (
+                                    704,
+                                    1333,
+                                ),
+                                (
+                                    736,
+                                    1333,
+                                ),
+                                (
+                                    768,
+                                    1333,
+                                ),
+                                (
+                                    800,
+                                    1333,
+                                ),
+                            ],
+                            type='RandomChoiceResize'),
+                    ],
+                    [
+                        dict(
+                            keep_ratio=True,
+                            scales=[
+                                (
+                                    400,
+                                    1333,
+                                ),
+                                (
+                                    500,
+                                    1333,
+                                ),
+                                (
+                                    600,
+                                    1333,
+                                ),
+                            ],
+                            type='RandomChoiceResize'),
+                        dict(
+                            allow_negative_crop=True,
+                            crop_size=(
+                                384,
+                                600,
+                            ),
+                            crop_type='absolute_range',
+                            type='RandomCrop'),
+                        dict(
+                            keep_ratio=True,
+                            scales=[
+                                (
+                                    480,
+                                    1333,
+                                ),
+                                (
+                                    512,
+                                    1333,
+                                ),
+                                (
+                                    544,
+                                    1333,
+                                ),
+                                (
+                                    576,
+                                    1333,
+                                ),
+                                (
+                                    608,
+                                    1333,
+                                ),
+                                (
+                                    640,
+                                    1333,
+                                ),
+                                (
+                                    672,
+                                    1333,
+                                ),
+                                (
+                                    704,
+                                    1333,
+                                ),
+                                (
+                                    736,
+                                    1333,
+                                ),
+                                (
+                                    768,
+                                    1333,
+                                ),
+                                (
+                                    800,
+                                    1333,
+                                ),
+                            ],
+                            type='RandomChoiceResize'),
+                    ],
+                ],
+                type='RandomChoice'),
+            dict(type='PackDetInputs'),
+        ],
+        type='CocoDataset'),
+    num_workers=2,
+    persistent_workers=True,
+    sampler=dict(shuffle=True, type='DefaultSampler'))
+train_num_workers = 2
+train_pipeline = [
+    dict(backend_args=None, type='LoadImageFromFile'),
+    dict(type='LoadAnnotations', with_bbox=True),
+    dict(prob=0.5, type='RandomFlip'),
+    dict(
+        transforms=[
+            [
+                dict(
+                    keep_ratio=True,
+                    scales=[
+                        (
+                            480,
+                            1333,
+                        ),
+                        (
+                            512,
+                            1333,
+                        ),
+                        (
+                            544,
+                            1333,
+                        ),
+                        (
+                            576,
+                            1333,
+                        ),
+                        (
+                            608,
+                            1333,
+                        ),
+                        (
+                            640,
+                            1333,
+                        ),
+                        (
+                            672,
+                            1333,
+                        ),
+                        (
+                            704,
+                            1333,
+                        ),
+                        (
+                            736,
+                            1333,
+                        ),
+                        (
+                            768,
+                            1333,
+                        ),
+                        (
+                            800,
+                            1333,
+                        ),
+                    ],
+                    type='RandomChoiceResize'),
+            ],
+            [
+                dict(
+                    keep_ratio=True,
+                    scales=[
+                        (
+                            400,
+                            1333,
+                        ),
+                        (
+                            500,
+                            1333,
+                        ),
+                        (
+                            600,
+                            1333,
+                        ),
+                    ],
+                    type='RandomChoiceResize'),
+                dict(
+                    allow_negative_crop=True,
+                    crop_size=(
+                        384,
+                        600,
+                    ),
+                    crop_type='absolute_range',
+                    type='RandomCrop'),
+                dict(
+                    keep_ratio=True,
+                    scales=[
+                        (
+                            480,
+                            1333,
+                        ),
+                        (
+                            512,
+                            1333,
+                        ),
+                        (
+                            544,
+                            1333,
+                        ),
+                        (
+                            576,
+                            1333,
+                        ),
+                        (
+                            608,
+                            1333,
+                        ),
+                        (
+                            640,
+                            1333,
+                        ),
+                        (
+                            672,
+                            1333,
+                        ),
+                        (
+                            704,
+                            1333,
+                        ),
+                        (
+                            736,
+                            1333,
+                        ),
+                        (
+                            768,
+                            1333,
+                        ),
+                        (
+                            800,
+                            1333,
+                        ),
+                    ],
+                    type='RandomChoiceResize'),
+            ],
+        ],
+        type='RandomChoice'),
+    dict(type='PackDetInputs'),
+]
+val_cfg = dict(type='ValLoop')
+val_dataloader = dict(
+    batch_size=1,
+    dataset=dict(
+        ann_file='coco_annotations_val.json',
+        backend_args=None,
+        data_prefix=dict(img='images/val/'),
+        data_root='SKU110K_fixed/',
+        metainfo=dict(classes=('object', ), palette=[
+            (
+                220,
+                20,
+                60,
+            ),
+        ]),
+        pipeline=[
+            dict(backend_args=None, type='LoadImageFromFile'),
+            dict(keep_ratio=True, scale=(
+                1333,
+                800,
+            ), type='Resize'),
+            dict(type='LoadAnnotations', with_bbox=True),
+            dict(
+                meta_keys=(
+                    'img_id',
+                    'img_path',
+                    'ori_shape',
+                    'img_shape',
+                    'scale_factor',
+                ),
+                type='PackDetInputs'),
+        ],
+        test_mode=True,
+        type='CocoDataset'),
+    drop_last=False,
+    num_workers=2,
+    persistent_workers=True,
+    sampler=dict(shuffle=False, type='DefaultSampler'))
+val_evaluator = dict(
+    ann_file='SKU110K_fixed/coco_annotations_val.json',
+    backend_args=None,
+    format_only=False,
+    metric='bbox',
+    type='CocoMetric')
+vis_backends = [
+    dict(type='LocalVisBackend'),
+]
+visualizer = dict(
+    name='visualizer',
+    type='DetLocalVisualizer',
+    vis_backends=[
+        dict(type='LocalVisBackend'),
+        dict(type='TensorboardVisBackend'),
+    ])
+work_dir = './work_dirs\\sparse-rcnn_r50'
+
+2023/12/06 03:22:27 - mmengine - INFO - Distributed training is not used, all SyncBatchNorm (SyncBN) layers in the model will be automatically reverted to BatchNormXd layers if they are used.
+2023/12/06 03:22:27 - mmengine - INFO - Hooks will be executed in the following order:
+before_run:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(BELOW_NORMAL) LoggerHook                         
+ -------------------- 
+before_train:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(NORMAL      ) IterTimerHook                      
+(VERY_LOW    ) CheckpointHook                     
+ -------------------- 
+before_train_epoch:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(NORMAL      ) IterTimerHook                      
+(NORMAL      ) DistSamplerSeedHook                
+ -------------------- 
+before_train_iter:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(NORMAL      ) IterTimerHook                      
+ -------------------- 
+after_train_iter:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(NORMAL      ) IterTimerHook                      
+(BELOW_NORMAL) LoggerHook                         
+(LOW         ) ParamSchedulerHook                 
+(VERY_LOW    ) CheckpointHook                     
+ -------------------- 
+after_train_epoch:
+(NORMAL      ) IterTimerHook                      
+(LOW         ) ParamSchedulerHook                 
+(VERY_LOW    ) CheckpointHook                     
+ -------------------- 
+before_val:
+(VERY_HIGH   ) RuntimeInfoHook                    
+ -------------------- 
+before_val_epoch:
+(NORMAL      ) IterTimerHook                      
+ -------------------- 
+before_val_iter:
+(NORMAL      ) IterTimerHook                      
+ -------------------- 
+after_val_iter:
+(NORMAL      ) IterTimerHook                      
+(NORMAL      ) DetVisualizationHook               
+(BELOW_NORMAL) LoggerHook                         
+ -------------------- 
+after_val_epoch:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(NORMAL      ) IterTimerHook                      
+(BELOW_NORMAL) LoggerHook                         
+(LOW         ) ParamSchedulerHook                 
+(VERY_LOW    ) CheckpointHook                     
+ -------------------- 
+after_val:
+(VERY_HIGH   ) RuntimeInfoHook                    
+ -------------------- 
+after_train:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(VERY_LOW    ) CheckpointHook                     
+ -------------------- 
+before_test:
+(VERY_HIGH   ) RuntimeInfoHook                    
+ -------------------- 
+before_test_epoch:
+(NORMAL      ) IterTimerHook                      
+ -------------------- 
+before_test_iter:
+(NORMAL      ) IterTimerHook                      
+ -------------------- 
+after_test_iter:
+(NORMAL      ) IterTimerHook                      
+(NORMAL      ) DetVisualizationHook               
+(BELOW_NORMAL) LoggerHook                         
+ -------------------- 
+after_test_epoch:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(NORMAL      ) IterTimerHook                      
+(BELOW_NORMAL) LoggerHook                         
+ -------------------- 
+after_test:
+(VERY_HIGH   ) RuntimeInfoHook                    
+ -------------------- 
+after_run:
+(BELOW_NORMAL) LoggerHook                         
+ -------------------- 
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer2.0.bn1.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer2.0.bn1.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer2.0.bn2.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer2.0.bn2.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer2.0.bn3.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer2.0.bn3.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer2.0.downsample.1.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer2.0.downsample.1.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer2.1.bn1.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer2.1.bn1.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer2.1.bn2.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer2.1.bn2.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer2.1.bn3.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer2.1.bn3.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer2.2.bn1.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer2.2.bn1.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer2.2.bn2.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer2.2.bn2.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer2.2.bn3.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer2.2.bn3.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer2.3.bn1.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer2.3.bn1.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer2.3.bn2.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer2.3.bn2.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer2.3.bn3.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer2.3.bn3.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer3.0.bn1.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer3.0.bn1.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer3.0.bn2.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer3.0.bn2.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer3.0.bn3.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer3.0.bn3.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer3.0.downsample.1.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer3.0.downsample.1.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer3.1.bn1.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer3.1.bn1.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer3.1.bn2.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer3.1.bn2.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer3.1.bn3.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer3.1.bn3.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer3.2.bn1.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer3.2.bn1.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer3.2.bn2.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer3.2.bn2.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer3.2.bn3.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer3.2.bn3.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer3.3.bn1.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer3.3.bn1.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer3.3.bn2.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer3.3.bn2.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer3.3.bn3.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer3.3.bn3.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer3.4.bn1.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer3.4.bn1.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer3.4.bn2.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer3.4.bn2.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer3.4.bn3.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer3.4.bn3.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer3.5.bn1.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer3.5.bn1.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer3.5.bn2.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer3.5.bn2.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer3.5.bn3.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer3.5.bn3.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer4.0.bn1.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer4.0.bn1.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer4.0.bn2.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer4.0.bn2.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer4.0.bn3.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer4.0.bn3.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer4.0.downsample.1.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer4.0.downsample.1.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer4.1.bn1.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer4.1.bn1.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer4.1.bn2.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer4.1.bn2.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer4.1.bn3.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer4.1.bn3.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer4.2.bn1.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer4.2.bn1.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer4.2.bn2.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer4.2.bn2.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer4.2.bn3.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- backbone.layer4.2.bn3.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- neck.lateral_convs.0.conv.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- neck.lateral_convs.1.conv.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- neck.lateral_convs.2.conv.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- neck.lateral_convs.3.conv.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- neck.fpn_convs.0.conv.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- neck.fpn_convs.1.conv.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- neck.fpn_convs.2.conv.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- neck.fpn_convs.3.conv.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.0.fc_cls.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.0.fc_reg.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.0.attention.attn.out_proj.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.0.attention_norm.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.0.attention_norm.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.0.instance_interactive_conv.dynamic_layer.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.0.instance_interactive_conv.norm_in.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.0.instance_interactive_conv.norm_in.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.0.instance_interactive_conv.norm_out.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.0.instance_interactive_conv.norm_out.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.0.instance_interactive_conv.fc_layer.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.0.instance_interactive_conv.fc_norm.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.0.instance_interactive_conv.fc_norm.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.0.instance_interactive_conv_norm.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.0.instance_interactive_conv_norm.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.0.ffn.layers.0.0.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.0.ffn.layers.1.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.0.ffn_norm.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.0.ffn_norm.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.0.cls_fcs.1.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.0.cls_fcs.1.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.0.reg_fcs.1.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.0.reg_fcs.1.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.0.reg_fcs.4.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.0.reg_fcs.4.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.0.reg_fcs.7.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.0.reg_fcs.7.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.1.fc_cls.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.1.fc_reg.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.1.attention.attn.out_proj.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.1.attention_norm.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.1.attention_norm.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.1.instance_interactive_conv.dynamic_layer.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.1.instance_interactive_conv.norm_in.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.1.instance_interactive_conv.norm_in.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.1.instance_interactive_conv.norm_out.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.1.instance_interactive_conv.norm_out.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.1.instance_interactive_conv.fc_layer.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.1.instance_interactive_conv.fc_norm.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.1.instance_interactive_conv.fc_norm.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.1.instance_interactive_conv_norm.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.1.instance_interactive_conv_norm.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.1.ffn.layers.0.0.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.1.ffn.layers.1.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.1.ffn_norm.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.1.ffn_norm.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.1.cls_fcs.1.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.1.cls_fcs.1.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.1.reg_fcs.1.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.1.reg_fcs.1.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.1.reg_fcs.4.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.1.reg_fcs.4.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.1.reg_fcs.7.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.1.reg_fcs.7.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.2.fc_cls.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.2.fc_reg.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.2.attention.attn.out_proj.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.2.attention_norm.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.2.attention_norm.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.2.instance_interactive_conv.dynamic_layer.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.2.instance_interactive_conv.norm_in.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.2.instance_interactive_conv.norm_in.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.2.instance_interactive_conv.norm_out.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.2.instance_interactive_conv.norm_out.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.2.instance_interactive_conv.fc_layer.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.2.instance_interactive_conv.fc_norm.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.2.instance_interactive_conv.fc_norm.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.2.instance_interactive_conv_norm.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.2.instance_interactive_conv_norm.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.2.ffn.layers.0.0.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.2.ffn.layers.1.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.2.ffn_norm.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.2.ffn_norm.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.2.cls_fcs.1.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.2.cls_fcs.1.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.2.reg_fcs.1.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.2.reg_fcs.1.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.2.reg_fcs.4.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.2.reg_fcs.4.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.2.reg_fcs.7.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.2.reg_fcs.7.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.3.fc_cls.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.3.fc_reg.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.3.attention.attn.out_proj.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.3.attention_norm.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.3.attention_norm.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.3.instance_interactive_conv.dynamic_layer.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.3.instance_interactive_conv.norm_in.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.3.instance_interactive_conv.norm_in.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.3.instance_interactive_conv.norm_out.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.3.instance_interactive_conv.norm_out.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.3.instance_interactive_conv.fc_layer.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.3.instance_interactive_conv.fc_norm.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.3.instance_interactive_conv.fc_norm.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.3.instance_interactive_conv_norm.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.3.instance_interactive_conv_norm.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.3.ffn.layers.0.0.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.3.ffn.layers.1.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.3.ffn_norm.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.3.ffn_norm.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.3.cls_fcs.1.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.3.cls_fcs.1.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.3.reg_fcs.1.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.3.reg_fcs.1.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.3.reg_fcs.4.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.3.reg_fcs.4.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.3.reg_fcs.7.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.3.reg_fcs.7.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.4.fc_cls.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.4.fc_reg.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.4.attention.attn.out_proj.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.4.attention_norm.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.4.attention_norm.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.4.instance_interactive_conv.dynamic_layer.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.4.instance_interactive_conv.norm_in.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.4.instance_interactive_conv.norm_in.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.4.instance_interactive_conv.norm_out.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.4.instance_interactive_conv.norm_out.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.4.instance_interactive_conv.fc_layer.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.4.instance_interactive_conv.fc_norm.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.4.instance_interactive_conv.fc_norm.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.4.instance_interactive_conv_norm.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.4.instance_interactive_conv_norm.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.4.ffn.layers.0.0.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.4.ffn.layers.1.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.4.ffn_norm.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.4.ffn_norm.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.4.cls_fcs.1.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.4.cls_fcs.1.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.4.reg_fcs.1.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.4.reg_fcs.1.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.4.reg_fcs.4.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.4.reg_fcs.4.bias:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.4.reg_fcs.7.weight:weight_decay=0.0
+2023/12/06 03:22:29 - mmengine - INFO - paramwise_options -- roi_head.bbox_head.4.reg_fcs.7.bias:weight_decay=0.0
+2023/12/06 03:22:30 - mmengine - INFO - load model from: torchvision://resnet50
+2023/12/06 03:22:30 - mmengine - INFO - Loads checkpoint by torchvision backend from path: torchvision://resnet50
+2023/12/06 03:22:30 - mmengine - WARNING - The model and loaded state dict do not match exactly
+
+unexpected key in source state_dict: fc.weight, fc.bias
+
+Name of parameter - Initialization information
+
+backbone.conv1.weight - torch.Size([64, 3, 7, 7]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.bn1.weight - torch.Size([64]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.bn1.bias - torch.Size([64]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer1.0.conv1.weight - torch.Size([64, 64, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer1.0.bn1.weight - torch.Size([64]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer1.0.bn1.bias - torch.Size([64]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer1.0.conv2.weight - torch.Size([64, 64, 3, 3]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer1.0.bn2.weight - torch.Size([64]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer1.0.bn2.bias - torch.Size([64]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer1.0.conv3.weight - torch.Size([256, 64, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer1.0.bn3.weight - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer1.0.bn3.bias - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer1.0.downsample.0.weight - torch.Size([256, 64, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer1.0.downsample.1.weight - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer1.0.downsample.1.bias - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer1.1.conv1.weight - torch.Size([64, 256, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer1.1.bn1.weight - torch.Size([64]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer1.1.bn1.bias - torch.Size([64]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer1.1.conv2.weight - torch.Size([64, 64, 3, 3]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer1.1.bn2.weight - torch.Size([64]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer1.1.bn2.bias - torch.Size([64]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer1.1.conv3.weight - torch.Size([256, 64, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer1.1.bn3.weight - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer1.1.bn3.bias - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer1.2.conv1.weight - torch.Size([64, 256, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer1.2.bn1.weight - torch.Size([64]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer1.2.bn1.bias - torch.Size([64]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer1.2.conv2.weight - torch.Size([64, 64, 3, 3]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer1.2.bn2.weight - torch.Size([64]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer1.2.bn2.bias - torch.Size([64]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer1.2.conv3.weight - torch.Size([256, 64, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer1.2.bn3.weight - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer1.2.bn3.bias - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.0.conv1.weight - torch.Size([128, 256, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.0.bn1.weight - torch.Size([128]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.0.bn1.bias - torch.Size([128]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.0.conv2.weight - torch.Size([128, 128, 3, 3]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.0.bn2.weight - torch.Size([128]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.0.bn2.bias - torch.Size([128]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.0.conv3.weight - torch.Size([512, 128, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.0.bn3.weight - torch.Size([512]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.0.bn3.bias - torch.Size([512]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.0.downsample.0.weight - torch.Size([512, 256, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.0.downsample.1.weight - torch.Size([512]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.0.downsample.1.bias - torch.Size([512]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.1.conv1.weight - torch.Size([128, 512, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.1.bn1.weight - torch.Size([128]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.1.bn1.bias - torch.Size([128]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.1.conv2.weight - torch.Size([128, 128, 3, 3]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.1.bn2.weight - torch.Size([128]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.1.bn2.bias - torch.Size([128]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.1.conv3.weight - torch.Size([512, 128, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.1.bn3.weight - torch.Size([512]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.1.bn3.bias - torch.Size([512]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.2.conv1.weight - torch.Size([128, 512, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.2.bn1.weight - torch.Size([128]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.2.bn1.bias - torch.Size([128]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.2.conv2.weight - torch.Size([128, 128, 3, 3]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.2.bn2.weight - torch.Size([128]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.2.bn2.bias - torch.Size([128]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.2.conv3.weight - torch.Size([512, 128, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.2.bn3.weight - torch.Size([512]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.2.bn3.bias - torch.Size([512]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.3.conv1.weight - torch.Size([128, 512, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.3.bn1.weight - torch.Size([128]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.3.bn1.bias - torch.Size([128]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.3.conv2.weight - torch.Size([128, 128, 3, 3]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.3.bn2.weight - torch.Size([128]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.3.bn2.bias - torch.Size([128]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.3.conv3.weight - torch.Size([512, 128, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.3.bn3.weight - torch.Size([512]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.3.bn3.bias - torch.Size([512]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.0.conv1.weight - torch.Size([256, 512, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.0.bn1.weight - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.0.bn1.bias - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.0.conv2.weight - torch.Size([256, 256, 3, 3]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.0.bn2.weight - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.0.bn2.bias - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.0.conv3.weight - torch.Size([1024, 256, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.0.bn3.weight - torch.Size([1024]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.0.bn3.bias - torch.Size([1024]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.0.downsample.0.weight - torch.Size([1024, 512, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.0.downsample.1.weight - torch.Size([1024]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.0.downsample.1.bias - torch.Size([1024]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.1.conv1.weight - torch.Size([256, 1024, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.1.bn1.weight - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.1.bn1.bias - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.1.conv2.weight - torch.Size([256, 256, 3, 3]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.1.bn2.weight - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.1.bn2.bias - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.1.conv3.weight - torch.Size([1024, 256, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.1.bn3.weight - torch.Size([1024]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.1.bn3.bias - torch.Size([1024]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.2.conv1.weight - torch.Size([256, 1024, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.2.bn1.weight - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.2.bn1.bias - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.2.conv2.weight - torch.Size([256, 256, 3, 3]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.2.bn2.weight - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.2.bn2.bias - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.2.conv3.weight - torch.Size([1024, 256, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.2.bn3.weight - torch.Size([1024]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.2.bn3.bias - torch.Size([1024]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.3.conv1.weight - torch.Size([256, 1024, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.3.bn1.weight - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.3.bn1.bias - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.3.conv2.weight - torch.Size([256, 256, 3, 3]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.3.bn2.weight - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.3.bn2.bias - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.3.conv3.weight - torch.Size([1024, 256, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.3.bn3.weight - torch.Size([1024]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.3.bn3.bias - torch.Size([1024]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.4.conv1.weight - torch.Size([256, 1024, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.4.bn1.weight - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.4.bn1.bias - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.4.conv2.weight - torch.Size([256, 256, 3, 3]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.4.bn2.weight - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.4.bn2.bias - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.4.conv3.weight - torch.Size([1024, 256, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.4.bn3.weight - torch.Size([1024]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.4.bn3.bias - torch.Size([1024]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.5.conv1.weight - torch.Size([256, 1024, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.5.bn1.weight - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.5.bn1.bias - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.5.conv2.weight - torch.Size([256, 256, 3, 3]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.5.bn2.weight - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.5.bn2.bias - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.5.conv3.weight - torch.Size([1024, 256, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.5.bn3.weight - torch.Size([1024]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.5.bn3.bias - torch.Size([1024]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer4.0.conv1.weight - torch.Size([512, 1024, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer4.0.bn1.weight - torch.Size([512]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer4.0.bn1.bias - torch.Size([512]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer4.0.conv2.weight - torch.Size([512, 512, 3, 3]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer4.0.bn2.weight - torch.Size([512]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer4.0.bn2.bias - torch.Size([512]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer4.0.conv3.weight - torch.Size([2048, 512, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer4.0.bn3.weight - torch.Size([2048]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer4.0.bn3.bias - torch.Size([2048]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer4.0.downsample.0.weight - torch.Size([2048, 1024, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer4.0.downsample.1.weight - torch.Size([2048]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer4.0.downsample.1.bias - torch.Size([2048]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer4.1.conv1.weight - torch.Size([512, 2048, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer4.1.bn1.weight - torch.Size([512]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer4.1.bn1.bias - torch.Size([512]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer4.1.conv2.weight - torch.Size([512, 512, 3, 3]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer4.1.bn2.weight - torch.Size([512]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer4.1.bn2.bias - torch.Size([512]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer4.1.conv3.weight - torch.Size([2048, 512, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer4.1.bn3.weight - torch.Size([2048]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer4.1.bn3.bias - torch.Size([2048]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer4.2.conv1.weight - torch.Size([512, 2048, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer4.2.bn1.weight - torch.Size([512]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer4.2.bn1.bias - torch.Size([512]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer4.2.conv2.weight - torch.Size([512, 512, 3, 3]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer4.2.bn2.weight - torch.Size([512]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer4.2.bn2.bias - torch.Size([512]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer4.2.conv3.weight - torch.Size([2048, 512, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer4.2.bn3.weight - torch.Size([2048]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer4.2.bn3.bias - torch.Size([2048]): 
+PretrainedInit: load from torchvision://resnet50 
+
+neck.lateral_convs.0.conv.weight - torch.Size([256, 256, 1, 1]): 
+XavierInit: gain=1, distribution=uniform, bias=0 
+
+neck.lateral_convs.0.conv.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+neck.lateral_convs.1.conv.weight - torch.Size([256, 512, 1, 1]): 
+XavierInit: gain=1, distribution=uniform, bias=0 
+
+neck.lateral_convs.1.conv.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+neck.lateral_convs.2.conv.weight - torch.Size([256, 1024, 1, 1]): 
+XavierInit: gain=1, distribution=uniform, bias=0 
+
+neck.lateral_convs.2.conv.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+neck.lateral_convs.3.conv.weight - torch.Size([256, 2048, 1, 1]): 
+XavierInit: gain=1, distribution=uniform, bias=0 
+
+neck.lateral_convs.3.conv.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+neck.fpn_convs.0.conv.weight - torch.Size([256, 256, 3, 3]): 
+XavierInit: gain=1, distribution=uniform, bias=0 
+
+neck.fpn_convs.0.conv.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+neck.fpn_convs.1.conv.weight - torch.Size([256, 256, 3, 3]): 
+XavierInit: gain=1, distribution=uniform, bias=0 
+
+neck.fpn_convs.1.conv.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+neck.fpn_convs.2.conv.weight - torch.Size([256, 256, 3, 3]): 
+XavierInit: gain=1, distribution=uniform, bias=0 
+
+neck.fpn_convs.2.conv.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+neck.fpn_convs.3.conv.weight - torch.Size([256, 256, 3, 3]): 
+XavierInit: gain=1, distribution=uniform, bias=0 
+
+neck.fpn_convs.3.conv.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+rpn_head.init_proposal_bboxes.weight - torch.Size([200, 4]): 
+Initialized by user-defined `init_weights` in EmbeddingRPNHead  
+
+rpn_head.init_proposal_features.weight - torch.Size([200, 256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.0.fc_cls.weight - torch.Size([1, 256]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.0.fc_cls.bias - torch.Size([1]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.0.fc_reg.weight - torch.Size([4, 256]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.0.fc_reg.bias - torch.Size([4]): 
+NormalInit: mean=0, std=0.001, bias=0 
+
+roi_head.bbox_head.0.attention.attn.in_proj_weight - torch.Size([768, 256]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.0.attention.attn.in_proj_bias - torch.Size([768]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.0.attention.attn.out_proj.weight - torch.Size([256, 256]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.0.attention.attn.out_proj.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.0.attention_norm.weight - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.0.attention_norm.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.0.instance_interactive_conv.dynamic_layer.weight - torch.Size([32768, 256]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.0.instance_interactive_conv.dynamic_layer.bias - torch.Size([32768]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.0.instance_interactive_conv.norm_in.weight - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.0.instance_interactive_conv.norm_in.bias - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.0.instance_interactive_conv.norm_out.weight - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.0.instance_interactive_conv.norm_out.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.0.instance_interactive_conv.fc_layer.weight - torch.Size([256, 12544]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.0.instance_interactive_conv.fc_layer.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.0.instance_interactive_conv.fc_norm.weight - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.0.instance_interactive_conv.fc_norm.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.0.instance_interactive_conv_norm.weight - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.0.instance_interactive_conv_norm.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.0.ffn.layers.0.0.weight - torch.Size([2048, 256]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.0.ffn.layers.0.0.bias - torch.Size([2048]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.0.ffn.layers.1.weight - torch.Size([256, 2048]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.0.ffn.layers.1.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.0.ffn_norm.weight - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.0.ffn_norm.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.0.cls_fcs.0.weight - torch.Size([256, 256]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.0.cls_fcs.1.weight - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.0.cls_fcs.1.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.0.reg_fcs.0.weight - torch.Size([256, 256]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.0.reg_fcs.1.weight - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.0.reg_fcs.1.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.0.reg_fcs.3.weight - torch.Size([256, 256]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.0.reg_fcs.4.weight - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.0.reg_fcs.4.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.0.reg_fcs.6.weight - torch.Size([256, 256]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.0.reg_fcs.7.weight - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.0.reg_fcs.7.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.1.fc_cls.weight - torch.Size([1, 256]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.1.fc_cls.bias - torch.Size([1]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.1.fc_reg.weight - torch.Size([4, 256]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.1.fc_reg.bias - torch.Size([4]): 
+NormalInit: mean=0, std=0.001, bias=0 
+
+roi_head.bbox_head.1.attention.attn.in_proj_weight - torch.Size([768, 256]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.1.attention.attn.in_proj_bias - torch.Size([768]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.1.attention.attn.out_proj.weight - torch.Size([256, 256]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.1.attention.attn.out_proj.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.1.attention_norm.weight - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.1.attention_norm.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.1.instance_interactive_conv.dynamic_layer.weight - torch.Size([32768, 256]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.1.instance_interactive_conv.dynamic_layer.bias - torch.Size([32768]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.1.instance_interactive_conv.norm_in.weight - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.1.instance_interactive_conv.norm_in.bias - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.1.instance_interactive_conv.norm_out.weight - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.1.instance_interactive_conv.norm_out.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.1.instance_interactive_conv.fc_layer.weight - torch.Size([256, 12544]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.1.instance_interactive_conv.fc_layer.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.1.instance_interactive_conv.fc_norm.weight - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.1.instance_interactive_conv.fc_norm.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.1.instance_interactive_conv_norm.weight - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.1.instance_interactive_conv_norm.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.1.ffn.layers.0.0.weight - torch.Size([2048, 256]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.1.ffn.layers.0.0.bias - torch.Size([2048]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.1.ffn.layers.1.weight - torch.Size([256, 2048]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.1.ffn.layers.1.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.1.ffn_norm.weight - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.1.ffn_norm.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.1.cls_fcs.0.weight - torch.Size([256, 256]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.1.cls_fcs.1.weight - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.1.cls_fcs.1.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.1.reg_fcs.0.weight - torch.Size([256, 256]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.1.reg_fcs.1.weight - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.1.reg_fcs.1.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.1.reg_fcs.3.weight - torch.Size([256, 256]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.1.reg_fcs.4.weight - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.1.reg_fcs.4.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.1.reg_fcs.6.weight - torch.Size([256, 256]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.1.reg_fcs.7.weight - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.1.reg_fcs.7.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.2.fc_cls.weight - torch.Size([1, 256]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.2.fc_cls.bias - torch.Size([1]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.2.fc_reg.weight - torch.Size([4, 256]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.2.fc_reg.bias - torch.Size([4]): 
+NormalInit: mean=0, std=0.001, bias=0 
+
+roi_head.bbox_head.2.attention.attn.in_proj_weight - torch.Size([768, 256]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.2.attention.attn.in_proj_bias - torch.Size([768]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.2.attention.attn.out_proj.weight - torch.Size([256, 256]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.2.attention.attn.out_proj.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.2.attention_norm.weight - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.2.attention_norm.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.2.instance_interactive_conv.dynamic_layer.weight - torch.Size([32768, 256]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.2.instance_interactive_conv.dynamic_layer.bias - torch.Size([32768]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.2.instance_interactive_conv.norm_in.weight - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.2.instance_interactive_conv.norm_in.bias - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.2.instance_interactive_conv.norm_out.weight - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.2.instance_interactive_conv.norm_out.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.2.instance_interactive_conv.fc_layer.weight - torch.Size([256, 12544]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.2.instance_interactive_conv.fc_layer.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.2.instance_interactive_conv.fc_norm.weight - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.2.instance_interactive_conv.fc_norm.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.2.instance_interactive_conv_norm.weight - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.2.instance_interactive_conv_norm.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.2.ffn.layers.0.0.weight - torch.Size([2048, 256]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.2.ffn.layers.0.0.bias - torch.Size([2048]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.2.ffn.layers.1.weight - torch.Size([256, 2048]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.2.ffn.layers.1.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.2.ffn_norm.weight - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.2.ffn_norm.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.2.cls_fcs.0.weight - torch.Size([256, 256]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.2.cls_fcs.1.weight - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.2.cls_fcs.1.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.2.reg_fcs.0.weight - torch.Size([256, 256]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.2.reg_fcs.1.weight - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.2.reg_fcs.1.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.2.reg_fcs.3.weight - torch.Size([256, 256]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.2.reg_fcs.4.weight - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.2.reg_fcs.4.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.2.reg_fcs.6.weight - torch.Size([256, 256]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.2.reg_fcs.7.weight - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.2.reg_fcs.7.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.3.fc_cls.weight - torch.Size([1, 256]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.3.fc_cls.bias - torch.Size([1]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.3.fc_reg.weight - torch.Size([4, 256]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.3.fc_reg.bias - torch.Size([4]): 
+NormalInit: mean=0, std=0.001, bias=0 
+
+roi_head.bbox_head.3.attention.attn.in_proj_weight - torch.Size([768, 256]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.3.attention.attn.in_proj_bias - torch.Size([768]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.3.attention.attn.out_proj.weight - torch.Size([256, 256]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.3.attention.attn.out_proj.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.3.attention_norm.weight - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.3.attention_norm.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.3.instance_interactive_conv.dynamic_layer.weight - torch.Size([32768, 256]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.3.instance_interactive_conv.dynamic_layer.bias - torch.Size([32768]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.3.instance_interactive_conv.norm_in.weight - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.3.instance_interactive_conv.norm_in.bias - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.3.instance_interactive_conv.norm_out.weight - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.3.instance_interactive_conv.norm_out.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.3.instance_interactive_conv.fc_layer.weight - torch.Size([256, 12544]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.3.instance_interactive_conv.fc_layer.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.3.instance_interactive_conv.fc_norm.weight - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.3.instance_interactive_conv.fc_norm.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.3.instance_interactive_conv_norm.weight - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.3.instance_interactive_conv_norm.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.3.ffn.layers.0.0.weight - torch.Size([2048, 256]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.3.ffn.layers.0.0.bias - torch.Size([2048]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.3.ffn.layers.1.weight - torch.Size([256, 2048]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.3.ffn.layers.1.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.3.ffn_norm.weight - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.3.ffn_norm.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.3.cls_fcs.0.weight - torch.Size([256, 256]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.3.cls_fcs.1.weight - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.3.cls_fcs.1.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.3.reg_fcs.0.weight - torch.Size([256, 256]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.3.reg_fcs.1.weight - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.3.reg_fcs.1.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.3.reg_fcs.3.weight - torch.Size([256, 256]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.3.reg_fcs.4.weight - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.3.reg_fcs.4.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.3.reg_fcs.6.weight - torch.Size([256, 256]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.3.reg_fcs.7.weight - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.3.reg_fcs.7.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.4.fc_cls.weight - torch.Size([1, 256]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.4.fc_cls.bias - torch.Size([1]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.4.fc_reg.weight - torch.Size([4, 256]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.4.fc_reg.bias - torch.Size([4]): 
+NormalInit: mean=0, std=0.001, bias=0 
+
+roi_head.bbox_head.4.attention.attn.in_proj_weight - torch.Size([768, 256]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.4.attention.attn.in_proj_bias - torch.Size([768]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.4.attention.attn.out_proj.weight - torch.Size([256, 256]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.4.attention.attn.out_proj.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.4.attention_norm.weight - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.4.attention_norm.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.4.instance_interactive_conv.dynamic_layer.weight - torch.Size([32768, 256]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.4.instance_interactive_conv.dynamic_layer.bias - torch.Size([32768]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.4.instance_interactive_conv.norm_in.weight - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.4.instance_interactive_conv.norm_in.bias - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.4.instance_interactive_conv.norm_out.weight - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.4.instance_interactive_conv.norm_out.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.4.instance_interactive_conv.fc_layer.weight - torch.Size([256, 12544]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.4.instance_interactive_conv.fc_layer.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.4.instance_interactive_conv.fc_norm.weight - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.4.instance_interactive_conv.fc_norm.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.4.instance_interactive_conv_norm.weight - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.4.instance_interactive_conv_norm.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.4.ffn.layers.0.0.weight - torch.Size([2048, 256]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.4.ffn.layers.0.0.bias - torch.Size([2048]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.4.ffn.layers.1.weight - torch.Size([256, 2048]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.4.ffn.layers.1.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.4.ffn_norm.weight - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.4.ffn_norm.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.4.cls_fcs.0.weight - torch.Size([256, 256]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.4.cls_fcs.1.weight - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.4.cls_fcs.1.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.4.reg_fcs.0.weight - torch.Size([256, 256]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.4.reg_fcs.1.weight - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.4.reg_fcs.1.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.4.reg_fcs.3.weight - torch.Size([256, 256]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.4.reg_fcs.4.weight - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.4.reg_fcs.4.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.4.reg_fcs.6.weight - torch.Size([256, 256]): 
+Initialized by user-defined `init_weights` in DIIHead  
+
+roi_head.bbox_head.4.reg_fcs.7.weight - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+
+roi_head.bbox_head.4.reg_fcs.7.bias - torch.Size([256]): 
+The value is the same before and after calling `init_weights` of SparseRCNN  
+2023/12/06 03:22:31 - mmengine - INFO - Load checkpoint from checkpoints/sparse_rcnn_r50_fpn_300_proposals_crop_mstrain_480-800_3x_coco_20201223_024605-9fe92701.pth
+2023/12/06 03:22:31 - mmengine - WARNING - "FileClient" will be deprecated in future. Please use io functions in https://mmengine.readthedocs.io/en/latest/api/fileio.html#file-io
+2023/12/06 03:22:31 - mmengine - WARNING - "HardDiskBackend" is the alias of "LocalBackend" and the former will be deprecated in future.
+2023/12/06 03:22:31 - mmengine - INFO - Checkpoints will be saved to c:\Users\BLOOM\Documents\Github\term7cv\work_dirs\sparse-rcnn_r50.
+2023/12/06 03:24:33 - mmengine - INFO - Epoch(train)  [1][ 5/21]  base_lr: 3.5556e-05 lr: 3.5556e-05  eta: 1:23:47  time: 24.5252  data_time: 1.6542  memory: 7118  loss: 23.2164  s0.loss_cls: 2.1399  s0.pos_acc: 100.0000  s0.loss_bbox: 0.9987  s0.loss_iou: 1.9899  s1.loss_cls: 2.5406  s1.pos_acc: 100.0000  s1.loss_bbox: 0.7383  s1.loss_iou: 1.6320  s2.loss_cls: 1.7737  s2.pos_acc: 100.0000  s2.loss_bbox: 0.6790  s2.loss_iou: 1.5165  s3.loss_cls: 2.2099  s3.pos_acc: 100.0000  s3.loss_bbox: 0.6677  s3.loss_iou: 1.4888  s4.loss_cls: 2.7150  s4.pos_acc: 100.0000  s4.loss_bbox: 0.6625  s4.loss_iou: 1.4640
+2023/12/06 03:25:33 - mmengine - INFO - Epoch(train)  [1][10/21]  base_lr: 8.0000e-05 lr: 8.0000e-05  eta: 1:00:48  time: 18.2444  data_time: 0.8306  memory: 6212  loss: 20.6937  s0.loss_cls: 1.8220  s0.pos_acc: 100.0000  s0.loss_bbox: 1.0395  s0.loss_iou: 2.0103  s1.loss_cls: 1.9621  s1.pos_acc: 100.0000  s1.loss_bbox: 0.7778  s1.loss_iou: 1.6657  s2.loss_cls: 1.1708  s2.pos_acc: 100.0000  s2.loss_bbox: 0.7267  s2.loss_iou: 1.5573  s3.loss_cls: 1.4659  s3.pos_acc: 100.0000  s3.loss_bbox: 0.7130  s3.loss_iou: 1.5290  s4.loss_cls: 2.0324  s4.pos_acc: 100.0000  s4.loss_bbox: 0.7086  s4.loss_iou: 1.5127
+2023/12/06 03:26:44 - mmengine - INFO - Epoch(train)  [1][15/21]  base_lr: 8.0000e-05 lr: 8.0000e-05  eta: 0:54:56  time: 16.9047  data_time: 0.5557  memory: 6315  loss: 18.3771  s0.loss_cls: 1.4441  s0.pos_acc: 100.0000  s0.loss_bbox: 0.9893  s0.loss_iou: 2.0135  s1.loss_cls: 1.3789  s1.pos_acc: 100.0000  s1.loss_bbox: 0.7667  s1.loss_iou: 1.6765  s2.loss_cls: 0.8372  s2.pos_acc: 100.0000  s2.loss_bbox: 0.7195  s2.loss_iou: 1.5837  s3.loss_cls: 1.0276  s3.pos_acc: 100.0000  s3.loss_bbox: 0.7083  s3.loss_iou: 1.5605  s4.loss_cls: 1.4168  s4.pos_acc: 100.0000  s4.loss_bbox: 0.7062  s4.loss_iou: 1.5483
+2023/12/06 03:27:42 - mmengine - INFO - Epoch(train)  [1][20/21]  base_lr: 8.0000e-05 lr: 8.0000e-05  eta: 0:49:16  time: 15.5612  data_time: 0.4181  memory: 7438  loss: 17.1408  s0.loss_cls: 1.1476  s0.pos_acc: 100.0000  s0.loss_bbox: 0.9653  s0.loss_iou: 2.0183  s1.loss_cls: 1.0875  s1.pos_acc: 100.0000  s1.loss_bbox: 0.7665  s1.loss_iou: 1.6876  s2.loss_cls: 0.6626  s2.pos_acc: 100.0000  s2.loss_bbox: 0.7239  s2.loss_iou: 1.5997  s3.loss_cls: 0.8052  s3.pos_acc: 100.0000  s3.loss_bbox: 0.7152  s3.loss_iou: 1.5805  s4.loss_cls: 1.0984  s4.pos_acc: 100.0000  s4.loss_bbox: 0.7125  s4.loss_iou: 1.5698
+2023/12/06 03:27:43 - mmengine - INFO - Exp name: sparse-rcnn_r50_20231206_032219
+2023/12/06 03:27:52 - mmengine - INFO - Epoch(val)  [1][5/5]    eta: 0:00:00  time: 1.7484  data_time: 1.1309  memory: 1847  
+2023/12/06 03:27:52 - mmengine - INFO - Evaluating bbox...
+2023/12/06 03:27:53 - mmengine - INFO - bbox_mAP_copypaste: 0.056 0.172 0.036 -1.000 0.004 0.100
+2023/12/06 03:27:53 - mmengine - INFO - Epoch(val) [1][5/5]    coco/bbox_mAP: 0.0560  coco/bbox_mAP_50: 0.1720  coco/bbox_mAP_75: 0.0360  coco/bbox_mAP_s: -1.0000  coco/bbox_mAP_m: 0.0040  coco/bbox_mAP_l: 0.1000  data_time: 1.1309  time: 1.7484
+2023/12/06 03:27:55 - mmengine - INFO - The best checkpoint with 0.0560 coco/bbox_mAP at 1 epoch is saved to best_coco_bbox_mAP_epoch_1.pth.
+2023/12/06 03:29:06 - mmengine - INFO - Epoch(train)  [2][ 5/21]  base_lr: 8.0000e-05 lr: 8.0000e-05  eta: 0:45:08  time: 14.7223  data_time: 0.3405  memory: 5869  loss: 15.9650  s0.loss_cls: 0.9204  s0.pos_acc: 100.0000  s0.loss_bbox: 0.9314  s0.loss_iou: 2.0039  s1.loss_cls: 0.8773  s1.pos_acc: 100.0000  s1.loss_bbox: 0.7354  s1.loss_iou: 1.6706  s2.loss_cls: 0.5415  s2.pos_acc: 100.0000  s2.loss_bbox: 0.6966  s2.loss_iou: 1.5790  s3.loss_cls: 0.6513  s3.pos_acc: 100.0000  s3.loss_bbox: 0.6867  s3.loss_iou: 1.5579  s4.loss_cls: 0.8790  s4.pos_acc: 100.0000  s4.loss_bbox: 0.6840  s4.loss_iou: 1.5500
+2023/12/06 03:30:06 - mmengine - INFO - Epoch(train)  [2][10/21]  base_lr: 8.0000e-05 lr: 8.0000e-05  eta: 0:42:36  time: 14.2825  data_time: 0.2865  memory: 7575  loss: 15.3459  s0.loss_cls: 0.8055  s0.pos_acc: 100.0000  s0.loss_bbox: 0.9271  s0.loss_iou: 1.9842  s1.loss_cls: 0.7623  s1.pos_acc: 100.0000  s1.loss_bbox: 0.7309  s1.loss_iou: 1.6426  s2.loss_cls: 0.4826  s2.pos_acc: 100.0000  s2.loss_bbox: 0.6932  s2.loss_iou: 1.5576  s3.loss_cls: 0.5726  s3.pos_acc: 100.0000  s3.loss_bbox: 0.6841  s3.loss_iou: 1.5347  s4.loss_cls: 0.7626  s4.pos_acc: 100.0000  s4.loss_bbox: 0.6821  s4.loss_iou: 1.5238
+2023/12/06 03:31:32 - mmengine - INFO - Epoch(train)  [2][15/21]  base_lr: 8.0000e-05 lr: 8.0000e-05  eta: 0:42:37  time: 14.6983  data_time: 0.2475  memory: 6757  loss: 14.6067  s0.loss_cls: 0.7271  s0.pos_acc: 100.0000  s0.loss_bbox: 0.8870  s0.loss_iou: 1.9542  s1.loss_cls: 0.6822  s1.pos_acc: 100.0000  s1.loss_bbox: 0.6904  s1.loss_iou: 1.5997  s2.loss_cls: 0.4408  s2.pos_acc: 100.0000  s2.loss_bbox: 0.6536  s2.loss_iou: 1.5137  s3.loss_cls: 0.5178  s3.pos_acc: 100.0000  s3.loss_bbox: 0.6453  s3.loss_iou: 1.4912  s4.loss_cls: 0.6807  s4.pos_acc: 100.0000  s4.loss_bbox: 0.6430  s4.loss_iou: 1.4800
+2023/12/06 03:33:06 - mmengine - INFO - Epoch(train)  [2][20/21]  base_lr: 8.0000e-05 lr: 8.0000e-05  eta: 0:42:46  time: 15.1852  data_time: 0.2180  memory: 6497  loss: 14.0345  s0.loss_cls: 0.6608  s0.pos_acc: 100.0000  s0.loss_bbox: 0.8590  s0.loss_iou: 1.9290  s1.loss_cls: 0.6186  s1.pos_acc: 100.0000  s1.loss_bbox: 0.6630  s1.loss_iou: 1.5630  s2.loss_cls: 0.4069  s2.pos_acc: 100.0000  s2.loss_bbox: 0.6278  s2.loss_iou: 1.4789  s3.loss_cls: 0.4757  s3.pos_acc: 100.0000  s3.loss_bbox: 0.6190  s3.loss_iou: 1.4543  s4.loss_cls: 0.6176  s4.pos_acc: 100.0000  s4.loss_bbox: 0.6164  s4.loss_iou: 1.4446
+2023/12/06 03:33:06 - mmengine - INFO - Exp name: sparse-rcnn_r50_20231206_032219
+2023/12/06 03:33:09 - mmengine - INFO - Epoch(val)  [2][5/5]    eta: 0:00:00  time: 1.1574  data_time: 0.5729  memory: 1875  
+2023/12/06 03:33:09 - mmengine - INFO - Evaluating bbox...
+2023/12/06 03:33:11 - mmengine - INFO - bbox_mAP_copypaste: 0.073 0.220 0.061 -1.000 0.008 0.132
+2023/12/06 03:33:11 - mmengine - INFO - Epoch(val) [2][5/5]    coco/bbox_mAP: 0.0730  coco/bbox_mAP_50: 0.2200  coco/bbox_mAP_75: 0.0610  coco/bbox_mAP_s: -1.0000  coco/bbox_mAP_m: 0.0080  coco/bbox_mAP_l: 0.1320  data_time: 0.0127  time: 0.5780
+2023/12/06 03:33:11 - mmengine - INFO - The previous best checkpoint c:\Users\BLOOM\Documents\Github\term7cv\work_dirs\sparse-rcnn_r50\best_coco_bbox_mAP_epoch_1.pth is removed
+2023/12/06 03:33:13 - mmengine - INFO - The best checkpoint with 0.0730 coco/bbox_mAP at 2 epoch is saved to best_coco_bbox_mAP_epoch_2.pth.
+2023/12/06 03:34:23 - mmengine - INFO - Epoch(train)  [3][ 5/21]  base_lr: 8.0000e-05 lr: 8.0000e-05  eta: 0:40:05  time: 14.7568  data_time: 0.1964  memory: 7215  loss: 13.5105  s0.loss_cls: 0.6002  s0.pos_acc: 100.0000  s0.loss_bbox: 0.8370  s0.loss_iou: 1.9044  s1.loss_cls: 0.5601  s1.pos_acc: 100.0000  s1.loss_bbox: 0.6364  s1.loss_iou: 1.5296  s2.loss_cls: 0.3761  s2.pos_acc: 100.0000  s2.loss_bbox: 0.6030  s2.loss_iou: 1.4472  s3.loss_cls: 0.4355  s3.pos_acc: 100.0000  s3.loss_bbox: 0.5946  s3.loss_iou: 1.4241  s4.loss_cls: 0.5588  s4.pos_acc: 100.0000  s4.loss_bbox: 0.5915  s4.loss_iou: 1.4118
+2023/12/06 03:36:02 - mmengine - INFO - Epoch(train)  [3][10/21]  base_lr: 8.0000e-05 lr: 8.0000e-05  eta: 0:40:08  time: 14.7403  data_time: 0.0200  memory: 7354  loss: 12.6636  s0.loss_cls: 0.4948  s0.pos_acc: 100.0000  s0.loss_bbox: 0.8084  s0.loss_iou: 1.8794  s1.loss_cls: 0.4359  s1.pos_acc: 100.0000  s1.loss_bbox: 0.6070  s1.loss_iou: 1.4940  s2.loss_cls: 0.2893  s2.pos_acc: 100.0000  s2.loss_bbox: 0.5760  s2.loss_iou: 1.4144  s3.loss_cls: 0.3276  s3.pos_acc: 100.0000  s3.loss_bbox: 0.5680  s3.loss_iou: 1.3933  s4.loss_cls: 0.4234  s4.pos_acc: 100.0000  s4.loss_bbox: 0.5662  s4.loss_iou: 1.3858
+2023/12/06 03:37:29 - mmengine - INFO - Epoch(train)  [3][15/21]  base_lr: 8.0000e-05 lr: 8.0000e-05  eta: 0:39:22  time: 14.7309  data_time: 0.0199  memory: 6784  loss: 11.5152  s0.loss_cls: 0.3149  s0.pos_acc: 100.0000  s0.loss_bbox: 0.7697  s0.loss_iou: 1.8599  s1.loss_cls: 0.2285  s1.pos_acc: 100.0000  s1.loss_bbox: 0.5767  s1.loss_iou: 1.4613  s2.loss_cls: 0.1732  s2.pos_acc: 100.0000  s2.loss_bbox: 0.5499  s2.loss_iou: 1.3876  s3.loss_cls: 0.1732  s3.pos_acc: 100.0000  s3.loss_bbox: 0.5432  s3.loss_iou: 1.3667  s4.loss_cls: 0.2039  s4.pos_acc: 100.0000  s4.loss_bbox: 0.5426  s4.loss_iou: 1.3638
+2023/12/06 03:38:44 - mmengine - INFO - Epoch(train)  [3][20/21]  base_lr: 8.0000e-05 lr: 8.0000e-05  eta: 0:37:59  time: 14.9931  data_time: 0.0199  memory: 6022  loss: 10.9626  s0.loss_cls: 0.2149  s0.pos_acc: 100.0000  s0.loss_bbox: 0.7338  s0.loss_iou: 1.8393  s1.loss_cls: 0.1655  s1.pos_acc: 100.0000  s1.loss_bbox: 0.5439  s1.loss_iou: 1.4283  s2.loss_cls: 0.1581  s2.pos_acc: 100.0000  s2.loss_bbox: 0.5196  s2.loss_iou: 1.3547  s3.loss_cls: 0.1529  s3.pos_acc: 100.0000  s3.loss_bbox: 0.5132  s3.loss_iou: 1.3352  s4.loss_cls: 0.1554  s4.pos_acc: 100.0000  s4.loss_bbox: 0.5130  s4.loss_iou: 1.3347
+2023/12/06 03:38:46 - mmengine - INFO - Exp name: sparse-rcnn_r50_20231206_032219
+2023/12/06 03:38:49 - mmengine - INFO - Epoch(val)  [3][5/5]    eta: 0:00:00  time: 0.9620  data_time: 0.3862  memory: 1775  
+2023/12/06 03:38:49 - mmengine - INFO - Evaluating bbox...
+2023/12/06 03:38:50 - mmengine - INFO - bbox_mAP_copypaste: 0.095 0.270 0.073 -1.000 0.015 0.165
+2023/12/06 03:38:50 - mmengine - INFO - Epoch(val) [3][5/5]    coco/bbox_mAP: 0.0950  coco/bbox_mAP_50: 0.2700  coco/bbox_mAP_75: 0.0730  coco/bbox_mAP_s: -1.0000  coco/bbox_mAP_m: 0.0150  coco/bbox_mAP_l: 0.1650  data_time: 0.0108  time: 0.5801
+2023/12/06 03:38:50 - mmengine - INFO - The previous best checkpoint c:\Users\BLOOM\Documents\Github\term7cv\work_dirs\sparse-rcnn_r50\best_coco_bbox_mAP_epoch_2.pth is removed
+2023/12/06 03:38:53 - mmengine - INFO - The best checkpoint with 0.0950 coco/bbox_mAP at 3 epoch is saved to best_coco_bbox_mAP_epoch_3.pth.
+2023/12/06 03:39:58 - mmengine - INFO - Epoch(train)  [4][ 5/21]  base_lr: 8.0000e-05 lr: 8.0000e-05  eta: 0:35:34  time: 14.7965  data_time: 0.0260  memory: 5944  loss: 10.6024  s0.loss_cls: 0.1827  s0.pos_acc: 100.0000  s0.loss_bbox: 0.7133  s0.loss_iou: 1.8198  s1.loss_cls: 0.1604  s1.pos_acc: 100.0000  s1.loss_bbox: 0.5140  s1.loss_iou: 1.3920  s2.loss_cls: 0.1548  s2.pos_acc: 100.0000  s2.loss_bbox: 0.4907  s2.loss_iou: 1.3156  s3.loss_cls: 0.1511  s3.pos_acc: 100.0000  s3.loss_bbox: 0.4840  s3.loss_iou: 1.2957  s4.loss_cls: 0.1505  s4.pos_acc: 100.0000  s4.loss_bbox: 0.4834  s4.loss_iou: 1.2944
+2023/12/06 03:41:25 - mmengine - INFO - Epoch(train)  [4][10/21]  base_lr: 8.0000e-05 lr: 8.0000e-05  eta: 0:34:41  time: 15.5081  data_time: 0.0170  memory: 6212  loss: 10.5503  s0.loss_cls: 0.1766  s0.pos_acc: 100.0000  s0.loss_bbox: 0.7208  s0.loss_iou: 1.8146  s1.loss_cls: 0.1547  s1.pos_acc: 100.0000  s1.loss_bbox: 0.5193  s1.loss_iou: 1.3758  s2.loss_cls: 0.1522  s2.pos_acc: 100.0000  s2.loss_bbox: 0.4959  s2.loss_iou: 1.2991  s3.loss_cls: 0.1480  s3.pos_acc: 100.0000  s3.loss_bbox: 0.4902  s3.loss_iou: 1.2824  s4.loss_cls: 0.1476  s4.pos_acc: 100.0000  s4.loss_bbox: 0.4904  s4.loss_iou: 1.2828
+2023/12/06 03:42:58 - mmengine - INFO - Epoch(train)  [4][15/21]  base_lr: 8.0000e-05 lr: 8.0000e-05  eta: 0:33:53  time: 15.7336  data_time: 0.0170  memory: 6975  loss: 10.3672  s0.loss_cls: 0.1780  s0.pos_acc: 100.0000  s0.loss_bbox: 0.6996  s0.loss_iou: 1.8068  s1.loss_cls: 0.1507  s1.pos_acc: 100.0000  s1.loss_bbox: 0.4985  s1.loss_iou: 1.3566  s2.loss_cls: 0.1519  s2.pos_acc: 100.0000  s2.loss_bbox: 0.4763  s2.loss_iou: 1.2808  s3.loss_cls: 0.1476  s3.pos_acc: 100.0000  s3.loss_bbox: 0.4710  s3.loss_iou: 1.2641  s4.loss_cls: 0.1472  s4.pos_acc: 100.0000  s4.loss_bbox: 0.4713  s4.loss_iou: 1.2669
+2023/12/06 03:44:05 - mmengine - INFO - Epoch(train)  [4][20/21]  base_lr: 8.0000e-05 lr: 8.0000e-05  eta: 0:32:21  time: 15.7732  data_time: 0.0170  memory: 6110  loss: 10.2239  s0.loss_cls: 0.1723  s0.pos_acc: 100.0000  s0.loss_bbox: 0.6927  s0.loss_iou: 1.7950  s1.loss_cls: 0.1494  s1.pos_acc: 100.0000  s1.loss_bbox: 0.4905  s1.loss_iou: 1.3382  s2.loss_cls: 0.1495  s2.pos_acc: 100.0000  s2.loss_bbox: 0.4684  s2.loss_iou: 1.2581  s3.loss_cls: 0.1452  s3.pos_acc: 100.0000  s3.loss_bbox: 0.4634  s3.loss_iou: 1.2446  s4.loss_cls: 0.1449  s4.pos_acc: 100.0000  s4.loss_bbox: 0.4634  s4.loss_iou: 1.2483
+2023/12/06 03:44:06 - mmengine - INFO - Exp name: sparse-rcnn_r50_20231206_032219
+2023/12/06 03:44:09 - mmengine - INFO - Epoch(val)  [4][5/5]    eta: 0:00:00  time: 0.8646  data_time: 0.2932  memory: 1874  
+2023/12/06 03:44:09 - mmengine - INFO - Evaluating bbox...
+2023/12/06 03:44:10 - mmengine - INFO - bbox_mAP_copypaste: 0.094 0.246 0.071 -1.000 0.014 0.159
+2023/12/06 03:44:10 - mmengine - INFO - Epoch(val) [4][5/5]    coco/bbox_mAP: 0.0940  coco/bbox_mAP_50: 0.2460  coco/bbox_mAP_75: 0.0710  coco/bbox_mAP_s: -1.0000  coco/bbox_mAP_m: 0.0140  coco/bbox_mAP_l: 0.1590  data_time: 0.0117  time: 0.5820
+2023/12/06 03:45:33 - mmengine - INFO - Epoch(train)  [5][ 5/21]  base_lr: 8.0000e-05 lr: 8.0000e-05  eta: 0:30:39  time: 15.3975  data_time: 0.0251  memory: 9746  loss: 10.3391  s0.loss_cls: 0.1621  s0.pos_acc: 100.0000  s0.loss_bbox: 0.7104  s0.loss_iou: 1.8083  s1.loss_cls: 0.1426  s1.pos_acc: 100.0000  s1.loss_bbox: 0.5074  s1.loss_iou: 1.3524  s2.loss_cls: 0.1417  s2.pos_acc: 100.0000  s2.loss_bbox: 0.4858  s2.loss_iou: 1.2701  s3.loss_cls: 0.1368  s3.pos_acc: 100.0000  s3.loss_bbox: 0.4817  s3.loss_iou: 1.2576  s4.loss_cls: 0.1371  s4.pos_acc: 100.0000  s4.loss_bbox: 0.4827  s4.loss_iou: 1.2626
+2023/12/06 03:46:47 - mmengine - INFO - Epoch(train)  [5][10/21]  base_lr: 8.0000e-05 lr: 8.0000e-05  eta: 0:29:21  time: 15.6577  data_time: 0.0200  memory: 7198  loss: 10.3169  s0.loss_cls: 0.1630  s0.pos_acc: 100.0000  s0.loss_bbox: 0.7011  s0.loss_iou: 1.8056  s1.loss_cls: 0.1439  s1.pos_acc: 100.0000  s1.loss_bbox: 0.4999  s1.loss_iou: 1.3511  s2.loss_cls: 0.1433  s2.pos_acc: 100.0000  s2.loss_bbox: 0.4793  s2.loss_iou: 1.2732  s3.loss_cls: 0.1378  s3.pos_acc: 100.0000  s3.loss_bbox: 0.4756  s3.loss_iou: 1.2614  s4.loss_cls: 0.1384  s4.pos_acc: 100.0000  s4.loss_bbox: 0.4768  s4.loss_iou: 1.2667
+2023/12/06 03:48:04 - mmengine - INFO - Epoch(train)  [5][15/21]  base_lr: 8.0000e-05 lr: 8.0000e-05  eta: 0:28:06  time: 15.6250  data_time: 0.0201  memory: 8790  loss: 10.4001  s0.loss_cls: 0.1586  s0.pos_acc: 100.0000  s0.loss_bbox: 0.7132  s0.loss_iou: 1.8191  s1.loss_cls: 0.1405  s1.pos_acc: 100.0000  s1.loss_bbox: 0.5165  s1.loss_iou: 1.3555  s2.loss_cls: 0.1401  s2.pos_acc: 100.0000  s2.loss_bbox: 0.4953  s2.loss_iou: 1.2737  s3.loss_cls: 0.1344  s3.pos_acc: 100.0000  s3.loss_bbox: 0.4922  s3.loss_iou: 1.2629  s4.loss_cls: 0.1348  s4.pos_acc: 100.0000  s4.loss_bbox: 0.4936  s4.loss_iou: 1.2698
+2023/12/06 03:49:17 - mmengine - INFO - Epoch(train)  [5][20/21]  base_lr: 8.0000e-05 lr: 8.0000e-05  eta: 0:26:47  time: 14.9172  data_time: 0.0202  memory: 6329  loss: 10.3289  s0.loss_cls: 0.1582  s0.pos_acc: 100.0000  s0.loss_bbox: 0.7090  s0.loss_iou: 1.8195  s1.loss_cls: 0.1419  s1.pos_acc: 100.0000  s1.loss_bbox: 0.5114  s1.loss_iou: 1.3488  s2.loss_cls: 0.1397  s2.pos_acc: 100.0000  s2.loss_bbox: 0.4889  s2.loss_iou: 1.2637  s3.loss_cls: 0.1348  s3.pos_acc: 100.0000  s3.loss_bbox: 0.4856  s3.loss_iou: 1.2521  s4.loss_cls: 0.1352  s4.pos_acc: 100.0000  s4.loss_bbox: 0.4856  s4.loss_iou: 1.2544
+2023/12/06 03:49:18 - mmengine - INFO - Exp name: sparse-rcnn_r50_20231206_032219
+2023/12/06 03:49:18 - mmengine - INFO - Saving checkpoint at 5 epochs
+2023/12/06 03:49:26 - mmengine - INFO - Epoch(val)  [5][5/5]    eta: 0:00:00  time: 0.8153  data_time: 0.2374  memory: 2219  
+2023/12/06 03:49:26 - mmengine - INFO - Evaluating bbox...
+2023/12/06 03:49:28 - mmengine - INFO - bbox_mAP_copypaste: 0.103 0.246 0.087 -1.000 0.017 0.169
+2023/12/06 03:49:28 - mmengine - INFO - Epoch(val) [5][5/5]    coco/bbox_mAP: 0.1030  coco/bbox_mAP_50: 0.2460  coco/bbox_mAP_75: 0.0870  coco/bbox_mAP_s: -1.0000  coco/bbox_mAP_m: 0.0170  coco/bbox_mAP_l: 0.1690  data_time: 0.0120  time: 0.6211
+2023/12/06 03:49:28 - mmengine - INFO - The previous best checkpoint c:\Users\BLOOM\Documents\Github\term7cv\work_dirs\sparse-rcnn_r50\best_coco_bbox_mAP_epoch_3.pth is removed
+2023/12/06 03:49:30 - mmengine - INFO - The best checkpoint with 0.1030 coco/bbox_mAP at 5 epoch is saved to best_coco_bbox_mAP_epoch_5.pth.
+2023/12/06 03:50:43 - mmengine - INFO - Epoch(train)  [6][ 5/21]  base_lr: 7.9728e-05 lr: 7.9728e-05  eta: 0:24:56  time: 14.3466  data_time: 0.0264  memory: 6497  loss: 10.2870  s0.loss_cls: 0.1579  s0.pos_acc: 100.0000  s0.loss_bbox: 0.7104  s0.loss_iou: 1.8159  s1.loss_cls: 0.1429  s1.pos_acc: 100.0000  s1.loss_bbox: 0.5103  s1.loss_iou: 1.3415  s2.loss_cls: 0.1401  s2.pos_acc: 100.0000  s2.loss_bbox: 0.4862  s2.loss_iou: 1.2547  s3.loss_cls: 0.1356  s3.pos_acc: 100.0000  s3.loss_bbox: 0.4837  s3.loss_iou: 1.2448  s4.loss_cls: 0.1362  s4.pos_acc: 100.0000  s4.loss_bbox: 0.4828  s4.loss_iou: 1.2441
+2023/12/06 03:51:44 - mmengine - INFO - Epoch(train)  [6][10/21]  base_lr: 7.8631e-05 lr: 7.8631e-05  eta: 0:23:30  time: 14.5620  data_time: 0.0205  memory: 5693  loss: 10.1355  s0.loss_cls: 0.1610  s0.pos_acc: 100.0000  s0.loss_bbox: 0.7025  s0.loss_iou: 1.7969  s1.loss_cls: 0.1463  s1.pos_acc: 100.0000  s1.loss_bbox: 0.5015  s1.loss_iou: 1.3163  s2.loss_cls: 0.1437  s2.pos_acc: 100.0000  s2.loss_bbox: 0.4775  s2.loss_iou: 1.2292  s3.loss_cls: 0.1388  s3.pos_acc: 100.0000  s3.loss_bbox: 0.4748  s3.loss_iou: 1.2177  s4.loss_cls: 0.1388  s4.pos_acc: 100.0000  s4.loss_bbox: 0.4741  s4.loss_iou: 1.2165
+2023/12/06 03:53:10 - mmengine - INFO - Epoch(train)  [6][15/21]  base_lr: 7.6715e-05 lr: 7.6715e-05  eta: 0:22:25  time: 14.6109  data_time: 0.0206  memory: 7118  loss: 9.8571  s0.loss_cls: 0.1589  s0.pos_acc: 100.0000  s0.loss_bbox: 0.6683  s0.loss_iou: 1.7807  s1.loss_cls: 0.1453  s1.pos_acc: 100.0000  s1.loss_bbox: 0.4648  s1.loss_iou: 1.2979  s2.loss_cls: 0.1423  s2.pos_acc: 100.0000  s2.loss_bbox: 0.4412  s2.loss_iou: 1.2096  s3.loss_cls: 0.1378  s3.pos_acc: 100.0000  s3.loss_bbox: 0.4389  s3.loss_iou: 1.1989  s4.loss_cls: 0.1370  s4.pos_acc: 100.0000  s4.loss_bbox: 0.4383  s4.loss_iou: 1.1971
+2023/12/06 03:54:14 - mmengine - INFO - Epoch(train)  [6][20/21]  base_lr: 7.4023e-05 lr: 7.4023e-05  eta: 0:21:03  time: 14.0927  data_time: 0.0207  memory: 6604  loss: 9.7214  s0.loss_cls: 0.1605  s0.pos_acc: 100.0000  s0.loss_bbox: 0.6543  s0.loss_iou: 1.7681  s1.loss_cls: 0.1468  s1.pos_acc: 100.0000  s1.loss_bbox: 0.4492  s1.loss_iou: 1.2839  s2.loss_cls: 0.1438  s2.pos_acc: 100.0000  s2.loss_bbox: 0.4256  s2.loss_iou: 1.1967  s3.loss_cls: 0.1402  s3.pos_acc: 100.0000  s3.loss_bbox: 0.4232  s3.loss_iou: 1.1852  s4.loss_cls: 0.1395  s4.pos_acc: 100.0000  s4.loss_bbox: 0.4225  s4.loss_iou: 1.1820
+2023/12/06 03:54:16 - mmengine - INFO - Exp name: sparse-rcnn_r50_20231206_032219
+2023/12/06 03:54:19 - mmengine - INFO - Epoch(val)  [6][5/5]    eta: 0:00:00  time: 0.7732  data_time: 0.2000  memory: 1830  
+2023/12/06 03:54:19 - mmengine - INFO - Evaluating bbox...
+2023/12/06 03:54:20 - mmengine - INFO - bbox_mAP_copypaste: 0.118 0.334 0.106 -1.000 0.022 0.217
+2023/12/06 03:54:20 - mmengine - INFO - Epoch(val) [6][5/5]    coco/bbox_mAP: 0.1180  coco/bbox_mAP_50: 0.3340  coco/bbox_mAP_75: 0.1060  coco/bbox_mAP_s: -1.0000  coco/bbox_mAP_m: 0.0220  coco/bbox_mAP_l: 0.2170  data_time: 0.0112  time: 0.5742
+2023/12/06 03:54:20 - mmengine - INFO - The previous best checkpoint c:\Users\BLOOM\Documents\Github\term7cv\work_dirs\sparse-rcnn_r50\best_coco_bbox_mAP_epoch_5.pth is removed
+2023/12/06 03:54:22 - mmengine - INFO - The best checkpoint with 0.1180 coco/bbox_mAP at 6 epoch is saved to best_coco_bbox_mAP_epoch_6.pth.
+2023/12/06 03:55:35 - mmengine - INFO - Epoch(train)  [7][ 5/21]  base_lr: 6.9856e-05 lr: 6.9856e-05  eta: 0:19:22  time: 13.7897  data_time: 0.0278  memory: 6212  loss: 9.6790  s0.loss_cls: 0.1589  s0.pos_acc: 100.0000  s0.loss_bbox: 0.6514  s0.loss_iou: 1.7649  s1.loss_cls: 0.1454  s1.pos_acc: 100.0000  s1.loss_bbox: 0.4459  s1.loss_iou: 1.2782  s2.loss_cls: 0.1424  s2.pos_acc: 100.0000  s2.loss_bbox: 0.4224  s2.loss_iou: 1.1938  s3.loss_cls: 0.1386  s3.pos_acc: 100.0000  s3.loss_bbox: 0.4200  s3.loss_iou: 1.1818  s4.loss_cls: 0.1389  s4.pos_acc: 100.0000  s4.loss_bbox: 0.4190  s4.loss_iou: 1.1774
+2023/12/06 03:56:40 - mmengine - INFO - Epoch(train)  [7][10/21]  base_lr: 6.5693e-05 lr: 6.5693e-05  eta: 0:18:04  time: 13.8270  data_time: 0.0200  memory: 6067  loss: 9.3822  s0.loss_cls: 0.1600  s0.pos_acc: 100.0000  s0.loss_bbox: 0.6230  s0.loss_iou: 1.7474  s1.loss_cls: 0.1462  s1.pos_acc: 100.0000  s1.loss_bbox: 0.4111  s1.loss_iou: 1.2490  s2.loss_cls: 0.1430  s2.pos_acc: 100.0000  s2.loss_bbox: 0.3878  s2.loss_iou: 1.1655  s3.loss_cls: 0.1387  s3.pos_acc: 100.0000  s3.loss_bbox: 0.3852  s3.loss_iou: 1.1537  s4.loss_cls: 0.1388  s4.pos_acc: 100.0000  s4.loss_bbox: 0.3839  s4.loss_iou: 1.1488
+2023/12/06 03:57:51 - mmengine - INFO - Epoch(train)  [7][15/21]  base_lr: 6.1000e-05 lr: 6.1000e-05  eta: 0:16:49  time: 13.5917  data_time: 0.0201  memory: 5837  loss: 9.3168  s0.loss_cls: 0.1597  s0.pos_acc: 100.0000  s0.loss_bbox: 0.6166  s0.loss_iou: 1.7416  s1.loss_cls: 0.1462  s1.pos_acc: 100.0000  s1.loss_bbox: 0.4052  s1.loss_iou: 1.2405  s2.loss_cls: 0.1419  s2.pos_acc: 100.0000  s2.loss_bbox: 0.3826  s2.loss_iou: 1.1581  s3.loss_cls: 0.1383  s3.pos_acc: 100.0000  s3.loss_bbox: 0.3800  s3.loss_iou: 1.1471  s4.loss_cls: 0.1379  s4.pos_acc: 100.0000  s4.loss_bbox: 0.3786  s4.loss_iou: 1.1425
+2023/12/06 03:59:11 - mmengine - INFO - Epoch(train)  [7][20/21]  base_lr: 5.5883e-05 lr: 5.5883e-05  eta: 0:15:39  time: 14.0364  data_time: 0.0202  memory: 7118  loss: 9.3101  s0.loss_cls: 0.1582  s0.pos_acc: 100.0000  s0.loss_bbox: 0.6153  s0.loss_iou: 1.7444  s1.loss_cls: 0.1438  s1.pos_acc: 100.0000  s1.loss_bbox: 0.4062  s1.loss_iou: 1.2414  s2.loss_cls: 0.1395  s2.pos_acc: 100.0000  s2.loss_bbox: 0.3834  s2.loss_iou: 1.1569  s3.loss_cls: 0.1354  s3.pos_acc: 100.0000  s3.loss_bbox: 0.3807  s3.loss_iou: 1.1474  s4.loss_cls: 0.1348  s4.pos_acc: 100.0000  s4.loss_bbox: 0.3794  s4.loss_iou: 1.1434
+2023/12/06 03:59:12 - mmengine - INFO - Exp name: sparse-rcnn_r50_20231206_032219
+2023/12/06 03:59:15 - mmengine - INFO - Epoch(val)  [7][5/5]    eta: 0:00:00  time: 0.7462  data_time: 0.1737  memory: 2244  
+2023/12/06 03:59:15 - mmengine - INFO - Evaluating bbox...
+2023/12/06 03:59:16 - mmengine - INFO - bbox_mAP_copypaste: 0.122 0.323 0.104 -1.000 0.018 0.225
+2023/12/06 03:59:16 - mmengine - INFO - Epoch(val) [7][5/5]    coco/bbox_mAP: 0.1220  coco/bbox_mAP_50: 0.3230  coco/bbox_mAP_75: 0.1040  coco/bbox_mAP_s: -1.0000  coco/bbox_mAP_m: 0.0180  coco/bbox_mAP_l: 0.2250  data_time: 0.0130  time: 0.5900
+2023/12/06 03:59:16 - mmengine - INFO - The previous best checkpoint c:\Users\BLOOM\Documents\Github\term7cv\work_dirs\sparse-rcnn_r50\best_coco_bbox_mAP_epoch_6.pth is removed
+2023/12/06 03:59:18 - mmengine - INFO - The best checkpoint with 0.1220 coco/bbox_mAP at 7 epoch is saved to best_coco_bbox_mAP_epoch_7.pth.
+2023/12/06 04:00:21 - mmengine - INFO - Epoch(train)  [8][ 5/21]  base_lr: 4.9344e-05 lr: 4.9344e-05  eta: 0:14:00  time: 13.2902  data_time: 0.0276  memory: 6382  loss: 9.1581  s0.loss_cls: 0.1567  s0.pos_acc: 100.0000  s0.loss_bbox: 0.6048  s0.loss_iou: 1.7367  s1.loss_cls: 0.1412  s1.pos_acc: 100.0000  s1.loss_bbox: 0.3913  s1.loss_iou: 1.2278  s2.loss_cls: 0.1370  s2.pos_acc: 100.0000  s2.loss_bbox: 0.3681  s2.loss_iou: 1.1421  s3.loss_cls: 0.1322  s3.pos_acc: 100.0000  s3.loss_bbox: 0.3650  s3.loss_iou: 1.1317  s4.loss_cls: 0.1313  s4.pos_acc: 100.0000  s4.loss_bbox: 0.3639  s4.loss_iou: 1.1281
+2023/12/06 04:01:49 - mmengine - INFO - Epoch(train)  [8][10/21]  base_lr: 4.3705e-05 lr: 4.3705e-05  eta: 0:12:53  time: 13.6615  data_time: 0.0217  memory: 6297  loss: 9.1023  s0.loss_cls: 0.1576  s0.pos_acc: 100.0000  s0.loss_bbox: 0.5972  s0.loss_iou: 1.7276  s1.loss_cls: 0.1415  s1.pos_acc: 100.0000  s1.loss_bbox: 0.3850  s1.loss_iou: 1.2219  s2.loss_cls: 0.1374  s2.pos_acc: 100.0000  s2.loss_bbox: 0.3631  s2.loss_iou: 1.1375  s3.loss_cls: 0.1318  s3.pos_acc: 100.0000  s3.loss_bbox: 0.3601  s3.loss_iou: 1.1275  s4.loss_cls: 0.1306  s4.pos_acc: 100.0000  s4.loss_bbox: 0.3593  s4.loss_iou: 1.1241
+2023/12/06 04:03:06 - mmengine - INFO - Epoch(train)  [8][15/21]  base_lr: 3.8028e-05 lr: 3.8028e-05  eta: 0:11:41  time: 14.1764  data_time: 0.0217  memory: 5944  loss: 9.0471  s0.loss_cls: 0.1594  s0.pos_acc: 100.0000  s0.loss_bbox: 0.5953  s0.loss_iou: 1.7286  s1.loss_cls: 0.1422  s1.pos_acc: 100.0000  s1.loss_bbox: 0.3799  s1.loss_iou: 1.2129  s2.loss_cls: 0.1376  s2.pos_acc: 100.0000  s2.loss_bbox: 0.3581  s2.loss_iou: 1.1286  s3.loss_cls: 0.1310  s3.pos_acc: 100.0000  s3.loss_bbox: 0.3549  s3.loss_iou: 1.1185  s4.loss_cls: 0.1302  s4.pos_acc: 100.0000  s4.loss_bbox: 0.3541  s4.loss_iou: 1.1160
+2023/12/06 04:04:35 - mmengine - INFO - Epoch(train)  [8][20/21]  base_lr: 3.2440e-05 lr: 3.2440e-05  eta: 0:10:32  time: 14.4653  data_time: 0.0216  memory: 6662  loss: 8.9828  s0.loss_cls: 0.1591  s0.pos_acc: 100.0000  s0.loss_bbox: 0.5888  s0.loss_iou: 1.7261  s1.loss_cls: 0.1421  s1.pos_acc: 100.0000  s1.loss_bbox: 0.3709  s1.loss_iou: 1.2074  s2.loss_cls: 0.1368  s2.pos_acc: 100.0000  s2.loss_bbox: 0.3491  s2.loss_iou: 1.1253  s3.loss_cls: 0.1293  s3.pos_acc: 100.0000  s3.loss_bbox: 0.3457  s3.loss_iou: 1.1156  s4.loss_cls: 0.1287  s4.pos_acc: 100.0000  s4.loss_bbox: 0.3449  s4.loss_iou: 1.1132
+2023/12/06 04:04:36 - mmengine - INFO - Exp name: sparse-rcnn_r50_20231206_032219
+2023/12/06 04:04:39 - mmengine - INFO - Epoch(val)  [8][5/5]    eta: 0:00:00  time: 0.7246  data_time: 0.1536  memory: 2183  
+2023/12/06 04:04:39 - mmengine - INFO - Evaluating bbox...
+2023/12/06 04:04:40 - mmengine - INFO - bbox_mAP_copypaste: 0.139 0.341 0.128 -1.000 0.026 0.229
+2023/12/06 04:04:40 - mmengine - INFO - Epoch(val) [8][5/5]    coco/bbox_mAP: 0.1390  coco/bbox_mAP_50: 0.3410  coco/bbox_mAP_75: 0.1280  coco/bbox_mAP_s: -1.0000  coco/bbox_mAP_m: 0.0260  coco/bbox_mAP_l: 0.2290  data_time: 0.0112  time: 0.5835
+2023/12/06 04:04:40 - mmengine - INFO - The previous best checkpoint c:\Users\BLOOM\Documents\Github\term7cv\work_dirs\sparse-rcnn_r50\best_coco_bbox_mAP_epoch_7.pth is removed
+2023/12/06 04:04:43 - mmengine - INFO - The best checkpoint with 0.1390 coco/bbox_mAP at 8 epoch is saved to best_coco_bbox_mAP_epoch_8.pth.
+2023/12/06 04:06:01 - mmengine - INFO - Epoch(train)  [9][ 5/21]  base_lr: 2.6026e-05 lr: 2.6026e-05  eta: 0:09:01  time: 14.0809  data_time: 0.0288  memory: 9273  loss: 8.8152  s0.loss_cls: 0.1604  s0.pos_acc: 100.0000  s0.loss_bbox: 0.5803  s0.loss_iou: 1.7093  s1.loss_cls: 0.1429  s1.pos_acc: 100.0000  s1.loss_bbox: 0.3586  s1.loss_iou: 1.1843  s2.loss_cls: 0.1370  s2.pos_acc: 100.0000  s2.loss_bbox: 0.3368  s2.loss_iou: 1.1038  s3.loss_cls: 0.1275  s3.pos_acc: 100.0000  s3.loss_bbox: 0.3329  s3.loss_iou: 1.0923  s4.loss_cls: 0.1272  s4.pos_acc: 100.0000  s4.loss_bbox: 0.3322  s4.loss_iou: 1.0898
+2023/12/06 04:07:13 - mmengine - INFO - Epoch(train)  [9][10/21]  base_lr: 2.1066e-05 lr: 2.1066e-05  eta: 0:07:48  time: 14.4117  data_time: 0.0218  memory: 6212  loss: 8.7701  s0.loss_cls: 0.1600  s0.pos_acc: 100.0000  s0.loss_bbox: 0.5821  s0.loss_iou: 1.7065  s1.loss_cls: 0.1425  s1.pos_acc: 100.0000  s1.loss_bbox: 0.3590  s1.loss_iou: 1.1751  s2.loss_cls: 0.1359  s2.pos_acc: 100.0000  s2.loss_bbox: 0.3377  s2.loss_iou: 1.0935  s3.loss_cls: 0.1251  s3.pos_acc: 100.0000  s3.loss_bbox: 0.3338  s3.loss_iou: 1.0818  s4.loss_cls: 0.1245  s4.pos_acc: 100.0000  s4.loss_bbox: 0.3330  s4.loss_iou: 1.0797
+2023/12/06 04:08:24 - mmengine - INFO - Epoch(train)  [9][15/21]  base_lr: 1.6573e-05 lr: 1.6573e-05  eta: 0:06:34  time: 14.2816  data_time: 0.0218  memory: 6955  loss: 8.7320  s0.loss_cls: 0.1585  s0.pos_acc: 100.0000  s0.loss_bbox: 0.5754  s0.loss_iou: 1.7089  s1.loss_cls: 0.1412  s1.pos_acc: 100.0000  s1.loss_bbox: 0.3516  s1.loss_iou: 1.1765  s2.loss_cls: 0.1352  s2.pos_acc: 100.0000  s2.loss_bbox: 0.3302  s2.loss_iou: 1.0937  s3.loss_cls: 0.1235  s3.pos_acc: 100.0000  s3.loss_bbox: 0.3262  s3.loss_iou: 1.0822  s4.loss_cls: 0.1229  s4.pos_acc: 100.0000  s4.loss_bbox: 0.3255  s4.loss_iou: 1.0806
+2023/12/06 04:09:27 - mmengine - INFO - Epoch(train)  [9][20/21]  base_lr: 1.2648e-05 lr: 1.2648e-05  eta: 0:05:20  time: 14.1947  data_time: 0.0217  memory: 6497  loss: 8.7161  s0.loss_cls: 0.1581  s0.pos_acc: 100.0000  s0.loss_bbox: 0.5772  s0.loss_iou: 1.7085  s1.loss_cls: 0.1410  s1.pos_acc: 100.0000  s1.loss_bbox: 0.3546  s1.loss_iou: 1.1700  s2.loss_cls: 0.1344  s2.pos_acc: 100.0000  s2.loss_bbox: 0.3331  s2.loss_iou: 1.0871  s3.loss_cls: 0.1223  s3.pos_acc: 100.0000  s3.loss_bbox: 0.3291  s3.loss_iou: 1.0759  s4.loss_cls: 0.1218  s4.pos_acc: 100.0000  s4.loss_bbox: 0.3286  s4.loss_iou: 1.0744
+2023/12/06 04:09:28 - mmengine - INFO - Exp name: sparse-rcnn_r50_20231206_032219
+2023/12/06 04:09:30 - mmengine - INFO - Epoch(val)  [9][5/5]    eta: 0:00:00  time: 0.7065  data_time: 0.1380  memory: 1859  
+2023/12/06 04:09:30 - mmengine - INFO - Evaluating bbox...
+2023/12/06 04:09:32 - mmengine - INFO - bbox_mAP_copypaste: 0.165 0.360 0.142 -1.000 0.032 0.260
+2023/12/06 04:09:32 - mmengine - INFO - Epoch(val) [9][5/5]    coco/bbox_mAP: 0.1650  coco/bbox_mAP_50: 0.3600  coco/bbox_mAP_75: 0.1420  coco/bbox_mAP_s: -1.0000  coco/bbox_mAP_m: 0.0320  coco/bbox_mAP_l: 0.2600  data_time: 0.0110  time: 0.5738
+2023/12/06 04:09:32 - mmengine - INFO - The previous best checkpoint c:\Users\BLOOM\Documents\Github\term7cv\work_dirs\sparse-rcnn_r50\best_coco_bbox_mAP_epoch_8.pth is removed
+2023/12/06 04:09:34 - mmengine - INFO - The best checkpoint with 0.1650 coco/bbox_mAP at 9 epoch is saved to best_coco_bbox_mAP_epoch_9.pth.
+2023/12/06 04:10:49 - mmengine - INFO - Epoch(train) [10][ 5/21]  base_lr: 8.8105e-06 lr: 8.8105e-06  eta: 0:03:51  time: 14.1413  data_time: 0.0285  memory: 6617  loss: 8.5890  s0.loss_cls: 0.1574  s0.pos_acc: 100.0000  s0.loss_bbox: 0.5681  s0.loss_iou: 1.7007  s1.loss_cls: 0.1406  s1.pos_acc: 100.0000  s1.loss_bbox: 0.3440  s1.loss_iou: 1.1569  s2.loss_cls: 0.1335  s2.pos_acc: 100.0000  s2.loss_bbox: 0.3218  s2.loss_iou: 1.0721  s3.loss_cls: 0.1208  s3.pos_acc: 100.0000  s3.loss_bbox: 0.3175  s3.loss_iou: 1.0599  s4.loss_cls: 0.1206  s4.pos_acc: 100.0000  s4.loss_bbox: 0.3169  s4.loss_iou: 1.0580
+2023/12/06 04:11:51 - mmengine - INFO - Epoch(train) [10][10/21]  base_lr: 6.4231e-06 lr: 6.4231e-06  eta: 0:02:38  time: 14.0904  data_time: 0.0212  memory: 6297  loss: 8.6006  s0.loss_cls: 0.1576  s0.pos_acc: 100.0000  s0.loss_bbox: 0.5686  s0.loss_iou: 1.6980  s1.loss_cls: 0.1405  s1.pos_acc: 100.0000  s1.loss_bbox: 0.3458  s1.loss_iou: 1.1578  s2.loss_cls: 0.1338  s2.pos_acc: 100.0000  s2.loss_bbox: 0.3236  s2.loss_iou: 1.0738  s3.loss_cls: 0.1204  s3.pos_acc: 100.0000  s3.loss_bbox: 0.3194  s3.loss_iou: 1.0622  s4.loss_cls: 0.1206  s4.pos_acc: 100.0000  s4.loss_bbox: 0.3187  s4.loss_iou: 1.0598
+2023/12/06 04:13:19 - mmengine - INFO - Epoch(train) [10][15/21]  base_lr: 4.8304e-06 lr: 4.8304e-06  eta: 0:01:27  time: 14.6474  data_time: 0.0210  memory: 7118  loss: 8.4658  s0.loss_cls: 0.1588  s0.pos_acc: 100.0000  s0.loss_bbox: 0.5594  s0.loss_iou: 1.6868  s1.loss_cls: 0.1418  s1.pos_acc: 100.0000  s1.loss_bbox: 0.3349  s1.loss_iou: 1.1397  s2.loss_cls: 0.1345  s2.pos_acc: 100.0000  s2.loss_bbox: 0.3124  s2.loss_iou: 1.0556  s3.loss_cls: 0.1204  s3.pos_acc: 100.0000  s3.loss_bbox: 0.3080  s3.loss_iou: 1.0440  s4.loss_cls: 0.1205  s4.pos_acc: 100.0000  s4.loss_bbox: 0.3073  s4.loss_iou: 1.0415
+2023/12/06 04:14:19 - mmengine - INFO - Epoch(train) [10][20/21]  base_lr: 4.0680e-06 lr: 4.0680e-06  eta: 0:00:14  time: 14.0892  data_time: 0.0211  memory: 7071  loss: 8.3935  s0.loss_cls: 0.1560  s0.pos_acc: 100.0000  s0.loss_bbox: 0.5611  s0.loss_iou: 1.6805  s1.loss_cls: 0.1395  s1.pos_acc: 100.0000  s1.loss_bbox: 0.3347  s1.loss_iou: 1.1262  s2.loss_cls: 0.1315  s2.pos_acc: 100.0000  s2.loss_bbox: 0.3123  s2.loss_iou: 1.0427  s3.loss_cls: 0.1175  s3.pos_acc: 100.0000  s3.loss_bbox: 0.3080  s3.loss_iou: 1.0308  s4.loss_cls: 0.1174  s4.pos_acc: 100.0000  s4.loss_bbox: 0.3072  s4.loss_iou: 1.0282
+2023/12/06 04:14:20 - mmengine - INFO - Exp name: sparse-rcnn_r50_20231206_032219
+2023/12/06 04:14:20 - mmengine - INFO - Saving checkpoint at 10 epochs
+2023/12/06 04:14:28 - mmengine - INFO - Epoch(val) [10][5/5]    eta: 0:00:00  time: 0.6982  data_time: 0.1257  memory: 2133  
+2023/12/06 04:14:28 - mmengine - INFO - Evaluating bbox...
+2023/12/06 04:14:29 - mmengine - INFO - bbox_mAP_copypaste: 0.158 0.375 0.130 -1.000 0.021 0.257
+2023/12/06 04:14:29 - mmengine - INFO - Epoch(val) [10][5/5]    coco/bbox_mAP: 0.1580  coco/bbox_mAP_50: 0.3750  coco/bbox_mAP_75: 0.1300  coco/bbox_mAP_s: -1.0000  coco/bbox_mAP_m: 0.0210  coco/bbox_mAP_l: 0.2570  data_time: 0.0127  time: 0.6234

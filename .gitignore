@@ -1,2 +1,5 @@
+checkpoints/
 dataset/
-.env
+mmdetection/
+SKU110K_fixed/
+work_dirs/

@@ -1,0 +1,6 @@
+train: '/content/sku110k-annotations/SKU110K_fixed_small/images/train'
+val: '/content/sku110k-annotations/SKU110K_fixed_small/images/val'
+test: '/content/sku110k-annotations/SKU110K_fixed_small/images/test'
+# Classes
+nc: 1  # number of classes
+names: ['object']  # class names

@@ -10,7 +10,7 @@ from PIL import Image
 
 def detect_objects(img_path: str, img_name: str, output_path: str):
     # Load a model
-    model = YOLO('Models/yolov8_best.pt')  # pretrained YOLOv8n model
+    model = YOLO('inventory_detection/yolov8/best.pt')  # pretrained YOLOv8n model
 
     # Run batched inference on a list of images
     results = model(source=img_path)

@@ -85,11 +85,6 @@ def extract_features_densenet(img_dir):
             img = densenet.preprocess_input(img)
             img = np.expand_dims(img, axis=0)
 
-            # Extract features from the desired layer (e.g., block5_pool)
-            # layer_name = 'block5_pool'  # You can choose a different layer
-            # intermediate_layer_model = tf.keras.models.Model(inputs=model.input, outputs=model.get_layer(layer_name).output)
-            # features_dict[img_name] = intermediate_layer_model.predict(img)
-
             features_dict[img_name] = model.predict(img)
 
     return features_dict
@@ -112,9 +107,9 @@ def clustering_MeanShift(reduced_features, img_dir):
     # 'reduced_features' to list of feature coordinates for clustering
     X = np.array(list(reduced_features.values()))
 
-    # bandwidth = estimate_bandwidth(X, quantile=0.2)
-    bandwidth = 0.4
-    # print(f'{bandwidth=}')
+    bandwidth = estimate_bandwidth(X, quantile=0.2)
+    # bandwidth = 0.4
+    print(f'{bandwidth=}')
     ms = MeanShift(bandwidth=bandwidth, bin_seeding=True).fit(X)
     ms_labels = ms.labels_
 

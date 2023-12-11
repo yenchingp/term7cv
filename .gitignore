@@ -3,3 +3,4 @@ dataset/
 mmdetection/
 SKU110K_fixed/
 work_dirs/
+__pycache__/

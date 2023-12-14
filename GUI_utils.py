@@ -107,8 +107,8 @@ def clustering_MeanShift(reduced_features, img_dir):
     # 'reduced_features' to list of feature coordinates for clustering
     X = np.array(list(reduced_features.values()))
 
-    bandwidth = estimate_bandwidth(X, quantile=0.2)
-    # bandwidth = 0.4
+    # bandwidth = estimate_bandwidth(X, quantile=0.2)
+    bandwidth = 0.4
     print(f'{bandwidth=}')
     ms = MeanShift(bandwidth=bandwidth, bin_seeding=True).fit(X)
     ms_labels = ms.labels_

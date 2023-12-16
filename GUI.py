@@ -31,6 +31,7 @@ class GUI(tk.Frame):
         self.inventory_count = None
         self.cluster_tree = None
         self.selected_cluster = tk.StringVar(value='')
+        self.bandwidth = tk.DoubleVar(value=0.4)
 
         self.obj_output_path = tk.StringVar(value='')
 
@@ -86,8 +87,15 @@ class GUI(tk.Frame):
         ttk.Label(text_frame, text='No. of Objects Detected: ').grid(row=0, column=0, sticky=tk.W)
         detected_objects_label = ttk.Label(text_frame, textvariable=self.detected_objects, width=3).grid(row=1, column=0)
 
+        bandwidth_frame = ttk.Frame(frame_2)
+        bandwidth_frame.grid(row=1, column=0)
+        
+        ttk.Label(bandwidth_frame, text='Bandwidth: ').grid(row=0, column=0)
+        ttk.Button(bandwidth_frame, text='?', command=self.bandwidth_help, width=2).grid(row=0, column=1)
+        ttk.Entry(bandwidth_frame, textvariable=self.bandwidth, width=16).grid(row=1, column=0, columnspan=2, pady=5)
+
         self.run_clustering_button = ttk.Button(frame_2, text='Run Clustering --->', command=self.clustering_button_click, state='disabled')
-        self.run_clustering_button.grid(row=1, column=0)
+        self.run_clustering_button.grid(row=2, column=0)
 
         self.cluster_tree = self.create_cluster_tree(frame_2)
         self.cluster_tree.grid(row=0, column=1, padx=15, rowspan=4)
@@ -212,10 +220,29 @@ class GUI(tk.Frame):
         self.output_image_label.configure(image=img)
         self.output_image_label.image=img
 
+    
+    def bandwidth_help(self):
+        messagebox.showinfo(title='Bandwidth Setting', message='Use a smaller bandwidth to estimate more clusters (Default = 0.4).\nInput 0 for automatic Bandwidth estimation (Not Recommended).')
+
+
+    def validate_bandwidth(self):
+        try:
+            bandwidth = float(self.bandwidth.get())
+            if bandwidth < 0:
+                return False
+            return True
+
+        except:
+            return False
+        
 
     def clustering_button_click(self):
         if not self.step1_complete:
             messagebox.showerror(title='Error', message='Run Object Detection first!')
+            return
+        
+        if not self.validate_bandwidth():
+            messagebox.showerror(title='Error', message='Enter a valid bandwidth!')
             return
 
         self.status.set('Running Clustering! Extracting image features...')
@@ -225,7 +252,7 @@ class GUI(tk.Frame):
 
         extract_features = thread_pool.submit(GUI_utils.extract_features_densenet, self.obj_output_path.get())
         features_dict = extract_features.result()
-        self.status.set('Running Clustering! Running PCA...')
+        self.status.set('Running Clustering! Running UMAP...')
         self.progress_bar['value'] = 60
         root.update_idletasks()
 
@@ -235,7 +262,7 @@ class GUI(tk.Frame):
         self.progress_bar['value'] = 70
         root.update_idletasks()
 
-        cluster_objs = thread_pool.submit(GUI_utils.clustering_MeanShift, reduced_features, self.obj_output_path.get())
+        cluster_objs = thread_pool.submit(GUI_utils.clustering_MeanShift, reduced_features, self.obj_output_path.get(), self.bandwidth.get())
         self.inventory_count, s_score = cluster_objs.result()
         self.silhouette_score.set(str(s_score))
         self.status.set('Running Clustering! Generating Thumbnails...')

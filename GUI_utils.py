@@ -103,12 +103,13 @@ def dim_reduction_umap(features_dict):
     return reduced_features
 
 
-def clustering_MeanShift(reduced_features, img_dir):
+def clustering_MeanShift(reduced_features, img_dir, bandwidth):
     # 'reduced_features' to list of feature coordinates for clustering
     X = np.array(list(reduced_features.values()))
 
-    # bandwidth = estimate_bandwidth(X, quantile=0.2)
-    bandwidth = 0.4
+    if bandwidth == 0:
+        bandwidth = estimate_bandwidth(X, quantile=0.15)
+
     print(f'{bandwidth=}')
     ms = MeanShift(bandwidth=bandwidth, bin_seeding=True).fit(X)
     ms_labels = ms.labels_

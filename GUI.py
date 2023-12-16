@@ -31,7 +31,7 @@ class GUI(tk.Frame):
         self.inventory_count = None
         self.cluster_tree = None
         self.selected_cluster = tk.StringVar(value='')
-        self.bandwidth = tk.DoubleVar(value=0.4)
+        self.bandwidth = tk.DoubleVar(value=0.5)
 
         self.obj_output_path = tk.StringVar(value='')
 
@@ -180,7 +180,7 @@ class GUI(tk.Frame):
         
         self.status.set('Running Object Detection...')
         self.progress_bar['value'] = 25
-        root.update_idletasks()
+        root.update()
 
         thread_pool = ThreadPoolExecutor(1)
         detect_status = thread_pool.submit(GUI_utils.detect_objects, self.image_path.get(), self.image_name.get(), self.output_path.get())
@@ -188,14 +188,14 @@ class GUI(tk.Frame):
         if detect_status.result():
             self.status.set('Detection Complete! Running Object Extraction...')
             self.progress_bar['value'] = 50
-            root.update_idletasks()
+            root.update()
 
             extract_status = thread_pool.submit(GUI_utils.extract_objects, self.image_path.get(), self.image_name.get(), self.output_path.get())
         
         if extract_status.result():
             self.step1_complete = True
             self.progress_bar['value'] = 75
-            root.update_idletasks()
+            root.update()
 
             thread_pool.shutdown()
 
@@ -208,7 +208,7 @@ class GUI(tk.Frame):
             self.run_clustering_button['state'] = 'normal'
             self.status.set('Object Extraction Complete! Ready for Clustering')
             self.progress_bar['value'] = 100
-            root.update_idletasks()
+            root.update()
 
 
     def display_annotated_img(self):
@@ -222,7 +222,7 @@ class GUI(tk.Frame):
 
     
     def bandwidth_help(self):
-        messagebox.showinfo(title='Bandwidth Setting', message='Use a smaller bandwidth to estimate more clusters (Default = 0.4).\nInput 0 for automatic Bandwidth estimation (Not Recommended).')
+        messagebox.showinfo(title='Bandwidth Setting', message='Use a smaller bandwidth to estimate more clusters.\n(Default = 0.4).\n\nInput 0 for automatic Bandwidth estimation\n(Not Recommended).')
 
 
     def validate_bandwidth(self):
@@ -247,37 +247,37 @@ class GUI(tk.Frame):
 
         self.status.set('Running Clustering! Extracting image features...')
         self.progress_bar['value'] = 10
-        root.update_idletasks()
+        root.update()
         thread_pool = ThreadPoolExecutor(1)
 
         extract_features = thread_pool.submit(GUI_utils.extract_features_densenet, self.obj_output_path.get())
         features_dict = extract_features.result()
         self.status.set('Running Clustering! Running UMAP...')
         self.progress_bar['value'] = 60
-        root.update_idletasks()
+        root.update()
 
         reduce_dims = thread_pool.submit(GUI_utils.dim_reduction_umap, features_dict)
         reduced_features = reduce_dims.result()
         self.status.set('Running Clustering! Determining Clusters...')
         self.progress_bar['value'] = 70
-        root.update_idletasks()
+        root.update()
 
         cluster_objs = thread_pool.submit(GUI_utils.clustering_MeanShift, reduced_features, self.obj_output_path.get(), self.bandwidth.get())
         self.inventory_count, s_score = cluster_objs.result()
         self.silhouette_score.set(str(s_score))
         self.status.set('Running Clustering! Generating Thumbnails...')
         self.progress_bar['value'] = 80
-        root.update_idletasks()
+        root.update()
         
         self.generate_collages(f'{self.obj_output_path.get()}/clusters')
         self.status.set('Running Clustering! Showing results...')
         self.progress_bar['value'] = 90
-        root.update_idletasks()
+        root.update()
 
         self.populate_cluster_tree(self.cluster_tree, self.inventory_count)
         self.status.set(f'Complete! Silhouette Score: {self.silhouette_score.get()}')
         self.progress_bar['value'] = 100
-        root.update_idletasks()
+        root.update()
     
 
     def populate_cluster_tree(self, tree: ttk.Treeview, inv_count: dict):

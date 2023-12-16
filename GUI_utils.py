@@ -141,7 +141,7 @@ def clustering_MeanShift(reduced_features, img_dir, bandwidth):
         
         source = os.path.join(img_dir, img_name)
         destination = os.path.join(cluster_path, img_name)
-        shutil.copy(source, destination)
+        shutil.move(source, destination)
         
         inventory_count[cluster_label] = inventory_count.get(cluster_label, 0) + 1
 
